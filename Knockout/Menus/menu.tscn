@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://37pf3hx8m6b8"]
+[gd_scene load_steps=2 format=3 uid="uid://37pf3hx8m6b8"]
+
+[ext_resource type="Script" path="res://Menus/menu.gd" id="1_wxrt3"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -7,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_wxrt3")
 
 [node name="Host" type="Button" parent="."]
 layout_mode = 0
@@ -20,3 +23,6 @@ offset_top = 67.0
 offset_right = 250.0
 offset_bottom = 117.0
 text = "Join"
+
+[connection signal="pressed" from="Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Join" to="." method="_on_join_pressed"]
