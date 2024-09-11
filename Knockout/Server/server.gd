@@ -25,26 +25,33 @@ makes it possible to run a server and a client simultaneously in one instance of
 '''
 
 const PORT: int = 9999
+const MAX_CLIENTS: int = 16
 @export var multiplayer_type: String = ""
 var enet_peer = ENetMultiplayerPeer.new()
 
+func debugs(tprint):
+	print("[Server] " + str(tprint))
+func debuge(tprint):
+	print("[Endpoint] " + str(tprint))
+	
 
 func _ready() -> void:
 	if multiplayer_type != "endpoint":
-		enet_peer.create_server(PORT)
+		enet_peer.create_server(PORT,MAX_CLIENTS)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_connected.connect(_peer_connected)
 		multiplayer.peer_disconnected.connect(_peer_disconnected)
-		print("Multiplayer running")
-		print(multiplayer.multiplayer_peer.get_connection_status())
-
-
+		debugs("Online")
+	else:
+		enet_peer.create_client("localhost", PORT)
+		multiplayer.multiplayer_peer = enet_peer
+		debuge("Connected to server")
 
 func _peer_disconnected(id):
-	print("Peer disconnected: " + id)
+	debugs("Peer disconnected: " + (id))
 
 func _peer_connected(id):
-	print("Peer connected: " + id)
+	debugs("Peer connected: " + str(id))
 
 
 
