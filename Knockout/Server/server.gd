@@ -24,12 +24,47 @@ makes it possible to run a server and a client simultaneously in one instance of
 			# Map, etc.
 '''
 
+const PORT: int = 9999
+@export var multiplayer_type: String = ""
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready() -> void:
-	pass # Replace with function body.
+	if multiplayer_type != "endpoint":
+		var enet_peer = ENetMultiplayerPeer.new()
+		enet_peer.create_server(PORT)
+		multiplayer.multiplayer_peer = enet_peer
+		multiplayer.peer_connected.connect(_peer_connected)
+		multiplayer.peer_disconnected.connect(_peer_disconnected)
+		print("Multiplayer running")
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+
+func _peer_disconnected(id):
+	print("Peer disconnected: " + id)
+
+func _peer_connected(id):
+	print("Peer connected: " + id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
