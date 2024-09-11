@@ -9,7 +9,7 @@ func _on_host_pressed():
 	server_instance.name = "Server"
 	server_instance.multiplayer_type = "host"
 	get_parent().add_child(server_instance)
-	get_tree().set_multiplayer(MultiplayerAPI.create_default_interface())
+	#get_tree().set_multiplayer(MultiplayerAPI.create_default_interface())
 	var client_instance = load_client.instantiate()
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "admin"
@@ -23,7 +23,7 @@ func _on_join_pressed():
 	server_instance.name = "Server"
 	server_instance.multiplayer_type = "endpoint"
 	get_parent().add_child(server_instance)
-	get_tree().set_multiplayer(MultiplayerAPI.create_default_interface())
+	#get_tree().set_multiplayer(MultiplayerAPI.create_default_interface())
 	var client_instance = load_client.instantiate()
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "player"
