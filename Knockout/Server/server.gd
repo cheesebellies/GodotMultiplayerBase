@@ -1,31 +1,55 @@
 extends Node
 
+
+
 #Constants
+
+
 
 const PORT: int = 9999
 const MAX_CLIENTS: int = 16
 
+
+
 #Enums
+
+
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_OTHER}
 
+
+
 #Export vars
+
+
 
 @export var multiplayer_type: String = ""
 
+
+
 #Variables
+
+
 
 var pairings = {}
 var enet_peer = ENetMultiplayerPeer.new()
 
+
+
 #Utility functions
+
+
 
 func debugs(tprint):
 	print("[Server] " + str(tprint))
 func debuge(tprint):
 	print("[Endpoint #-" + str(multiplayer.get_unique_id()) + "] " + str(tprint))
 
+
+
 #Built-in functions
+
+
 
 func init():
 	if multiplayer_type != "endpoint":
@@ -48,12 +72,24 @@ func _ready():
 func _process(_delta):
 	pass
 
+
+
 #Gameplay functions
 
+
+
+func update_position(packet: PackedByteArray):
+	var data = unpack_positional(packet)
+	get_node("../Client").update_opponent_positional(data)
+
 func start_game():
-	multiplayer.multiplayer_peer.refuse_new_connections = true
+	get_node("../Client").start_game()
+
+
 
 #Bit processing
+
+
 
 func unpack_positional(packet: PackedByteArray) -> Array:
 	var pos = Vector3()
@@ -100,7 +136,30 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 	packet.encode_float(37,rot.z)
 	return packet
 
+
+
 #Packet functions
+
+func send_positional(node: Node3D):
+	var packet = pack_positional(node)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,1)
+
+func echo_positional(id: int, packet: PackedByteArray):
+	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,1)
+
+func event_start_echo():
+	var packet = PackedByteArray()
+	packet.resize(2)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,0)
+	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
+
+func event_start():
+	var packet = PackedByteArray()
+	packet.resize(2)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,0)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_response(id):
 	var packet = PackedByteArray()
@@ -114,7 +173,11 @@ func ping_server():
 	packet.encode_u8(0,PACKET_TYPE_PING)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
+
+
 #Signals
+
+
 
 func _peer_disconnected(id):
 	debugs("Peer disconnected: " + str(id))
@@ -127,31 +190,25 @@ func _endpoint_packet_received(id: int, packet: PackedByteArray):
 	match packet_type:
 		PACKET_TYPE_PING:
 			debuge("Ping Successful")
-	debuge("Received packet from #-" + str(id))
+		PACKET_TYPE_POSITIONAL:
+			update_position(packet)
+		PACKET_TYPE_EVENT:
+			if packet.decode_u8(1) == 0:
+				start_game()
+	#debuge("Received packet from #-" + str(id))
 
 func _server_packet_received(id: int, packet: PackedByteArray):
 	var packet_type = packet.decode_u8(0)
 	match packet_type:
 		PACKET_TYPE_PING:
 			ping_response(id)
-	debugs("Received packet from #-" + str(id))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
+		PACKET_TYPE_POSITIONAL:
+			echo_positional(id, packet)
+		PACKET_TYPE_EVENT:
+			if packet.decode_u8(1) == 0:
+				multiplayer.multiplayer_peer.refuse_new_connections = true
+				var peers = multiplayer.get_peers()
+				pairings[peers[0]] = peers[1]
+				pairings[peers[1]] = peers[0]
+				event_start_echo()
+	#debugs("Received packet from #-" + str(id))
