@@ -11,15 +11,17 @@ func _on_host_pressed():
 	server_instance.name = "Server"
 	server_instance.multiplayer_type = "host"
 	get_parent().add_child(server_instance)
-	get_tree().set_multiplayer(SceneMultiplayer.new(),"/root/Server")
+	get_tree().set_multiplayer(MultiplayerAPI.create_default_interface(),"/root/Server")
+	get_parent().get_node("Server").init()
 	var endpoint_instance = load_server.instantiate()
 	var container = Node.new()
 	container.name = "clientroot"
 	endpoint_instance.name = "Server"
 	endpoint_instance.multiplayer_type = "endpoint"
 	get_parent().add_child(container)
-	get_tree().set_multiplayer(SceneMultiplayer.new(),"/root/clientroot")
+	get_tree().set_multiplayer(MultiplayerAPI.create_default_interface(),"/root/clientroot")
 	get_parent().get_node("clientroot").add_child(endpoint_instance)
+	get_parent().get_node("clientroot/Server").init()
 	var client_instance = load_client.instantiate()
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "admin"

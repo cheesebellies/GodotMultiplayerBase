@@ -1,4 +1,4 @@
-extends Node
+extends Node3D
 
 #Constants
 
@@ -16,6 +16,7 @@ enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_O
 #Variables
 
 var pairings = {}
+var enet_peer = ENetMultiplayerPeer.new()
 
 #Utility functions
 
@@ -26,9 +27,8 @@ func debuge(tprint):
 
 #Built-in functions
 
-func _ready() -> void:
+func init():
 	if multiplayer_type != "endpoint":
-		var enet_peer = ENetMultiplayerPeer.new()
 		enet_peer.create_server(PORT,MAX_CLIENTS)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_connected.connect(_peer_connected)
@@ -36,17 +36,22 @@ func _ready() -> void:
 		multiplayer.peer_packet.connect(_server_packet_received)
 		debugs("Online")
 	else:
-		var enet_peer = ENetMultiplayerPeer.new()
 		enet_peer.create_client("localhost", PORT)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
 		debuge("Connected to server")
 
+func _ready():
+	# Multiplayer functions get reset after added to tree, any changes in init
+	pass
+
+func _process(_delta):
+	pass
+
 #Gameplay functions
 
 func start_game():
-	print("AHHH WHY WAS THIS RUNNING")
-	#multiplayer.multiplayer_peer.refuse_new_connections = true
+	multiplayer.multiplayer_peer.refuse_new_connections = true
 
 #Bit processing
 
@@ -101,7 +106,6 @@ func ping_response(id):
 	var packet = PackedByteArray()
 	packet.resize(1)
 	packet.encode_u8(0,PACKET_TYPE_PING)
-	debugs(multiplayer.get_peers())
 	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_server():
@@ -116,7 +120,6 @@ func _peer_disconnected(id):
 	debugs("Peer disconnected: " + (id))
 
 func _peer_connected(id):
-	print(multiplayer.get_peers())
 	debugs("Peer connected: " + str(id))
 
 func _endpoint_packet_received(id: int, packet: PackedByteArray):
@@ -124,16 +127,14 @@ func _endpoint_packet_received(id: int, packet: PackedByteArray):
 	match packet_type:
 		PACKET_TYPE_PING:
 			debuge("Ping Successful")
-	debuge("Received packet from " + str(id))
+	debuge("Received packet from #-" + str(id))
 
 func _server_packet_received(id: int, packet: PackedByteArray):
-	print(multiplayer.multiplayer_peer)
-	print(multiplayer.multiplayer_peer.get_peer(id))
 	var packet_type = packet.decode_u8(0)
 	match packet_type:
 		PACKET_TYPE_PING:
 			ping_response(id)
-	debugs("Received packet from " + str(id))
+	debugs("Received packet from #-" + str(id))
 
 
 
