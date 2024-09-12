@@ -4,3 +4,17 @@
 
 [node name="Client" type="Node"]
 script = ExtResource("1_y5nvh")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="Control"]
+layout_mode = 0
+offset_right = 178.0
+offset_bottom = 153.0
+text = "ping server"
+
+[connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

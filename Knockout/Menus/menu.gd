@@ -24,8 +24,7 @@ func _on_host_pressed():
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "admin"
 	get_parent().get_node("clientroot").add_child(client_instance)
-	print("Hosting")
-
+	self.queue_free()
 
 func _on_join_pressed():
 	var server_instance = load_server.instantiate()
@@ -36,4 +35,4 @@ func _on_join_pressed():
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "player"
 	get_parent().add_child(client_instance)
-	print("Joining")
+	self.queue_free()
