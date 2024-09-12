@@ -7,7 +7,7 @@ const MAX_CLIENTS: int = 16
 
 #Enums
 
-enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_OTHER}
+enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_OTHER}
 
 #Export vars
 
@@ -15,6 +15,7 @@ enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_OTHER}
 
 #Variables
 
+var pairings = {}
 var enet_peer = ENetMultiplayerPeer.new()
 
 #Utility functions
@@ -39,6 +40,11 @@ func _ready() -> void:
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
 		debuge("Connected to server")
+
+#Gameplay functions
+
+func start_game():
+	multiplayer.multiplayer_peer.refuse_new_connections = true
 
 #Bit processing
 
