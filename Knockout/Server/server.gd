@@ -5,6 +5,10 @@ extends Node
 const PORT: int = 9999
 const MAX_CLIENTS: int = 16
 
+#Enums
+
+enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_OTHER}
+
 #Export vars
 
 @export var multiplayer_type: String = ""
@@ -38,10 +42,23 @@ func _ready() -> void:
 
 #Bit processing
 
-func unpack_positional(packet: PackedByteArray):
-	pass
+func unpack_positional(packet: PackedByteArray) -> Array:
+	var pos = Vector3()
+	var vel = Vector3()
+	var rot = Quaternion()
+	pos.x = packet.decode_float(1)
+	pos.y = packet.decode_float(5)
+	pos.z = packet.decode_float(9)
+	vel.x = packet.decode_float(13)
+	vel.y = packet.decode_float(17)
+	vel.z = packet.decode_float(21)
+	rot.w = packet.decode_float(25)
+	rot.x = packet.decode_float(29)
+	rot.y = packet.decode_float(33)
+	rot.z = packet.decode_float(37)
+	return [pos,vel,rot]
 
-func pack_positional(node: Node3D):
+func pack_positional(node: Node3D) -> PackedByteArray:
 	#***********************************************************
 	# Note that a normal float is 8 bytes, but for both Vector3
 	# and Quaternion, they are reduced to 4 bytes for speed.
@@ -56,25 +73,32 @@ func pack_positional(node: Node3D):
 	var vel = node.velocity
 	var rot = node.quaternion
 	var packet = PackedByteArray()
-	packet.resize(40)
-	packet.encode_float(0,pos.x)
-	packet.encode_float(4,pos.y)
-	packet.encode_float(8,pos.z)
-	packet.encode_float(12,vel.x)
-	packet.encode_float(16,vel.y)
-	packet.encode_float(20,vel.z)
-	packet.encode_float(24,rot.w)
-	packet.encode_float(28,rot.x)
-	packet.encode_float(32,rot.y)
-	packet.encode_float(36,rot.z)
+	packet.resize(41)
+	packet.encode_u8(0,PACKET_TYPE_POSITIONAL)
+	packet.encode_float(1,pos.x)
+	packet.encode_float(5,pos.y)
+	packet.encode_float(9,pos.z)
+	packet.encode_float(13,vel.x)
+	packet.encode_float(17,vel.y)
+	packet.encode_float(21,vel.z)
+	packet.encode_float(25,rot.w)
+	packet.encode_float(29,rot.x)
+	packet.encode_float(33,rot.y)
+	packet.encode_float(37,rot.z)
 	return packet
 
-#Processing functions
+#Packet functions
+
+func ping_response(id: int):
+	var packet = PackedByteArray()
+	packet.resize(1)
+	packet.encode_u8(0,PACKET_TYPE_PING)
+	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_server():
 	var packet = PackedByteArray()
-	packet.resize(4)
-	packet.encode_float(0,3.234234)
+	packet.resize(1)
+	packet.encode_u8(0,PACKET_TYPE_PING)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 #Signals
@@ -86,12 +110,18 @@ func _peer_connected(id):
 	debugs("Peer connected: " + str(id))
 
 func _endpoint_packet_received(id: int, packet: PackedByteArray):
+	var packet_type = packet.decode_u8(0)
+	match packet_type:
+		PACKET_TYPE_PING:
+			debuge("Ping Successful")
 	debuge("Received packet from " + str(id))
 
 func _server_packet_received(id: int, packet: PackedByteArray):
-	var data = packet.decode_float(0)
-	print(data)
-	print(type_string(typeof(data)))
+	var packet_type = packet.decode_u8(0)
+	match packet_type:
+		PACKET_TYPE_PING:
+			ping_response(id)
+	
 	debugs("Received packet from " + str(id))
 
 
