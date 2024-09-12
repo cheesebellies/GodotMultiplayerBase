@@ -33,6 +33,7 @@ func _on_join_pressed():
 	server_instance.name = "Server"
 	server_instance.multiplayer_type = "endpoint"
 	get_parent().add_child(server_instance)
+	get_parent().get_node("Server").init()
 	var client_instance = load_client.instantiate()
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "player"

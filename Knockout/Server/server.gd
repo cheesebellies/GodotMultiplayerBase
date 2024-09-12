@@ -1,4 +1,4 @@
-extends Node3D
+extends Node
 
 #Constants
 
@@ -23,7 +23,7 @@ var enet_peer = ENetMultiplayerPeer.new()
 func debugs(tprint):
 	print("[Server] " + str(tprint))
 func debuge(tprint):
-	print("[Endpoint] " + str(tprint))
+	print("[Endpoint #-" + str(multiplayer.get_unique_id()) + "] " + str(tprint))
 
 #Built-in functions
 
@@ -106,7 +106,7 @@ func ping_response(id):
 	var packet = PackedByteArray()
 	packet.resize(1)
 	packet.encode_u8(0,PACKET_TYPE_PING)
-	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
+	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_server():
 	var packet = PackedByteArray()
@@ -117,7 +117,7 @@ func ping_server():
 #Signals
 
 func _peer_disconnected(id):
-	debugs("Peer disconnected: " + (id))
+	debugs("Peer disconnected: " + str(id))
 
 func _peer_connected(id):
 	debugs("Peer connected: " + str(id))
