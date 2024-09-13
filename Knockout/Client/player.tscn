@@ -1,21 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bgqu04neoeayj"]
+[gd_scene load_steps=4 format=3 uid="uid://bgqu04neoeayj"]
 
 [ext_resource type="Script" path="res://Client/player.gd" id="1_61x8s"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_kmwua"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nwhx5"]
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_61x8s")
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_kmwua")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_nwhx5")
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCylinder3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.723599, -0.5086)
-radius = 0.0339222
-height = 0.785168
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
@@ -23,3 +21,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.0623427)
 target_position = Vector3(0, -2, 0)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.00690496, -0.498989)
+radius = 0.0339222
+height = 0.5315
+sides = 24

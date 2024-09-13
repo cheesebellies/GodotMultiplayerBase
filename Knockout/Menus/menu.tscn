@@ -53,36 +53,5 @@ theme_override_font_sizes/font_size = 50
 theme_override_styles/normal = ExtResource("2_ejfqt")
 text = "Join"
 
-[node name="CenterContainer2" type="CenterContainer" parent="Control"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer2"]
-custom_minimum_size = Vector2(400, 400)
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="IP" type="LineEdit" parent="Control/CenterContainer2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 190)
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = ExtResource("2_ejfqt")
-text = "localhost:9999"
-placeholder_text = "IP"
-alignment = 1
-
-[node name="Join" type="Button" parent="Control/CenterContainer2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 190)
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = ExtResource("2_ejfqt")
-text = "Join Server"
-
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]
-[connection signal="pressed" from="Control/CenterContainer2/VBoxContainer/Join" to="." method="_on_joinserver_pressed"]

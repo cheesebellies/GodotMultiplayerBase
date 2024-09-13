@@ -48,7 +48,3 @@ func _physics_process(_delta):
 	$Camera3D.position = Vector3(10.0*cos(deg_to_rad(float(i)*0.5)),10,10.0*sin(deg_to_rad(float(i)*0.5)))
 	$Camera3D.look_at(Vector3(0,5,0))
 	tick += 1
-
-
-func _on_joinserver_pressed():
-	pass # Replace with function body.
