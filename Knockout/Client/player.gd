@@ -8,6 +8,11 @@ const JUMP_VELOCITY = 4.5
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
+func attack():
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			pass
+
 func _input(event):
 	if !is_auth: return
 	var ncams = 0.002
