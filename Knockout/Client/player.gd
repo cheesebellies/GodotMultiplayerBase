@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 
-const SPEED = 12.0
+const SPEED = 9.5
 const JUMP_VELOCITY = 4.5
 @export var just_hit: bool = false
 @export var is_auth: bool = true
@@ -33,6 +33,11 @@ func _physics_process(delta):
 		if direction and is_on_floor():
 			velocity.x = (direction.x * SPEED)
 			velocity.z = (direction.z * SPEED)
+		elif direction:
+			velocity.x += 0.05*direction.x*SPEED
+			velocity.z += 0.05*direction.z*SPEED
+			velocity.x = clamp(velocity.x,-11.0, 11.0)
+			velocity.z = clamp(velocity.z,-11.0, 11.0)
 		elif is_on_floor() and !just_hit:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
