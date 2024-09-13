@@ -29,6 +29,8 @@ func update_opponent_positional(data: Array):
 	opp.velocity = data[1]
 	opp.quaternion = data[2]
 
+func apply_player_positional(impulse: Vector3):
+	get_node("Player").velocity += impulse
 
 func _on_start_pressed():
 	get_node("../Server").event_start()

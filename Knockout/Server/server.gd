@@ -15,7 +15,7 @@ const MAX_CLIENTS: int = 16
 
 
 
-enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_OTHER}
+enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
 
 
 
@@ -82,6 +82,13 @@ func update_position(packet: PackedByteArray):
 	var data = unpack_positional(packet)
 	get_node("../Client").update_opponent_positional(data)
 
+func apply_impulse(packet: PackedByteArray):
+	var impulse = Vector3()
+	impulse.x = packet.decode_float(1)
+	impulse.y = packet.decode_float(5)
+	impulse.z = packet.decode_float(9)
+	get_node("../Client").apply_player_positional(impulse)
+
 func start_game():
 	get_node("../Client").start_game()
 
@@ -140,6 +147,18 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 #Packet functions
 
+func send_hit(vel: Vector3):
+	var packet = PackedByteArray()
+	packet.resize(13)
+	packet.encode_u8(0,PACKET_TYPE_IMPULSE)
+	packet.encode_float(1,vel.x)
+	packet.encode_float(5,vel.y)
+	packet.encode_float(9,vel.z)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
+
+func echo_hit(id: int, packet: PackedByteArray):
+	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
+
 func send_positional(node: Node3D):
 	var packet = pack_positional(node)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,1)
@@ -188,22 +207,24 @@ func _peer_connected(id):
 func _endpoint_packet_received(id: int, packet: PackedByteArray):
 	var packet_type = packet.decode_u8(0)
 	match packet_type:
-		PACKET_TYPE_PING:
-			debuge("Ping Successful")
 		PACKET_TYPE_POSITIONAL:
 			update_position(packet)
+		PACKET_TYPE_PING:
+			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == 0:
 				start_game()
+		PACKET_TYPE_IMPULSE:
+			apply_impulse(packet)
 	#debuge("Received packet from #-" + str(id))
 
 func _server_packet_received(id: int, packet: PackedByteArray):
 	var packet_type = packet.decode_u8(0)
 	match packet_type:
-		PACKET_TYPE_PING:
-			ping_response(id)
 		PACKET_TYPE_POSITIONAL:
 			echo_positional(id, packet)
+		PACKET_TYPE_PING:
+			ping_response(id)
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == 0:
 				multiplayer.multiplayer_peer.refuse_new_connections = true
@@ -211,4 +232,6 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 				pairings[peers[0]] = peers[1]
 				pairings[peers[1]] = peers[0]
 				event_start_echo()
+		PACKET_TYPE_IMPULSE:
+			echo_hit(id,packet)
 	#debugs("Received packet from #-" + str(id))
