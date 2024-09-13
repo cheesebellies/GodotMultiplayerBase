@@ -1,20 +1,20 @@
 extends CharacterBody3D
 
 
-const SPEED = 5.0
+const SPEED = 12.0
 const JUMP_VELOCITY = 4.5
+@export var just_hit: bool = false
 @export var is_auth: bool = true
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func attack():
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			pass
-
 func _input(event):
 	if !is_auth: return
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			if $Camera3D/RayCast3D.is_colliding():
+				get_parent().hit_opponent((get_node("../Opponent").position - self.position).normalized() + Vector3(0,1.5,0))
 	var ncams = 0.002
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * ncams)
@@ -27,14 +27,16 @@ func _physics_process(delta):
 			Input.mouse_mode = abs(Input.mouse_mode - 2)
 		if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 			velocity.y = JUMP_VELOCITY
+			just_hit = true
 		var input_dir = Input.get_vector("a", "d", "w", "s")
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-		if direction:
-			velocity.x = direction.x * SPEED
-			velocity.z = direction.z * SPEED
-		else:
+		if direction and is_on_floor():
+			velocity.x = (direction.x * SPEED)
+			velocity.z = (direction.z * SPEED)
+		elif is_on_floor() and !just_hit:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	move_and_slide()
+	just_hit = false

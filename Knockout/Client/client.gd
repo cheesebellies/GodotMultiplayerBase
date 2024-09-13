@@ -11,7 +11,7 @@ func _ready() -> void:
 	if multiplayer_type != "admin":
 		$Control.queue_free()
 
-func _process(_delta) -> void:
+func _physics_process(_delta: float) -> void:
 	if game_started:
 		get_node("../Server").send_positional(get_node("Player"))
 
@@ -31,6 +31,10 @@ func update_opponent_positional(data: Array):
 
 func apply_player_positional(impulse: Vector3):
 	get_node("Player").velocity += impulse
+	get_node("Player").just_hit = true
+
+func hit_opponent(normal: Vector3):
+	get_node("../Server").send_hit(normal*2.0)
 
 func _on_start_pressed():
 	get_node("../Server").event_start()

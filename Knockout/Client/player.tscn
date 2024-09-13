@@ -21,3 +21,5 @@ height = 0.785168
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.0623427)
+target_position = Vector3(0, -2, 0)
