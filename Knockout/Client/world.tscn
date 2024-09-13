@@ -1,17 +1,31 @@
-[gd_scene load_steps=3 format=3 uid="uid://ddiwsa3s5efjd"]
+[gd_scene load_steps=6 format=3 uid="uid://ddiwsa3s5efjd"]
+
+[sub_resource type="Gradient" id="Gradient_nmjxf"]
+offsets = PackedFloat32Array(0.0149254, 0.858209, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ktlab"]
+noise_type = 0
+frequency = 0.0031
+offset = Vector3(-1000, 7.7, -5.6)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vo8ji"]
+color_ramp = SubResource("Gradient_nmjxf")
+noise = SubResource("FastNoiseLite_ktlab")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_otiy2"]
 albedo_color = Color(0.0431373, 0.219608, 0.0862745, 1)
+albedo_texture = SubResource("NoiseTexture2D_vo8ji")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5hrsd"]
-size = Vector3(20, 1, 20)
+size = Vector3(50, 1, 50)
 
 [node name="World" type="Node3D"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D"]
-size = Vector3(20, 1, 20)
+size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_otiy2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
@@ -19,3 +33,5 @@ shape = SubResource("BoxShape3D_5hrsd")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.624616, 0.780932, 0, -0.780932, 0.624616, 0, 10.5145, 0)
+light_color = Color(1, 0.917647, 0.85098, 1)
+light_energy = 3.362

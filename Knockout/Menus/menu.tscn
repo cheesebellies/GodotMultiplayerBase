@@ -1,28 +1,88 @@
-[gd_scene load_steps=2 format=3 uid="uid://37pf3hx8m6b8"]
+[gd_scene load_steps=4 format=3 uid="uid://37pf3hx8m6b8"]
 
 [ext_resource type="Script" path="res://Menus/menu.gd" id="1_wxrt3"]
+[ext_resource type="StyleBox" uid="uid://678gbkthcvuy" path="res://Assets/basic_button.tres" id="2_ejfqt"]
+[ext_resource type="ArrayMesh" uid="uid://1de1l3j34f2u" path="res://Assets/10680_Dog_v2.obj" id="2_wrxcg"]
 
-[node name="Menu" type="Control"]
+[node name="Menu" type="Node3D"]
+script = ExtResource("1_wxrt3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.33, 0, 0, 0, -1.44248e-08, 0.33, 0, -0.33, -1.44248e-08, 0, 0, 0)
+mesh = ExtResource("2_wrxcg")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.35131, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.701531, 0.364004, -0.612663, 0, 0.85971, 0.510783, 0.712639, -0.35833, 0.603113, 0, 0, 0)
+light_energy = 1.001
+
+[node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_wxrt3")
 
-[node name="Host" type="Button" parent="."]
-layout_mode = 0
-offset_right = 250.0
-offset_bottom = 50.0
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Host" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
 text = "Host"
 
-[node name="Join" type="Button" parent="."]
-layout_mode = 0
-offset_top = 67.0
-offset_right = 250.0
-offset_bottom = 117.0
+[node name="Join" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
 text = "Join"
 
-[connection signal="pressed" from="Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Join" to="." method="_on_join_pressed"]
+[node name="CenterContainer2" type="CenterContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer2"]
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="IP" type="LineEdit" parent="Control/CenterContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "localhost:9999"
+placeholder_text = "IP"
+alignment = 1
+
+[node name="Join" type="Button" parent="Control/CenterContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Join Server"
+
+[connection signal="pressed" from="Control/CenterContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Control/CenterContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Control/CenterContainer2/VBoxContainer/Join" to="." method="_on_joinserver_pressed"]

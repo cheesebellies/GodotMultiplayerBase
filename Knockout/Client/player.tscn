@@ -12,6 +12,10 @@ shape = SubResource("CapsuleShape3D_nwhx5")
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
 
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCylinder3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.723599, -0.5086)
+radius = 0.0339222
+height = 0.785168
+
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
-fov = 37.8493

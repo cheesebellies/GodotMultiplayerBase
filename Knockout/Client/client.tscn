@@ -13,13 +13,14 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Button" type="Button" parent="Control"]
+[node name="Ping" type="Button" parent="Control"]
+visible = false
 layout_mode = 0
 offset_right = 178.0
 offset_bottom = 153.0
 text = "ping server"
 
-[node name="Button2" type="Button" parent="Control"]
+[node name="Start" type="Button" parent="Control"]
 layout_mode = 0
 offset_left = 185.0
 offset_right = 363.0
@@ -31,5 +32,5 @@ text = "Start game"
 [node name="World" parent="." instance=ExtResource("3_0d1m3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.98454, 0)
 
-[connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="Control/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="Control/Ping" to="." method="_on_ping_pressed"]
+[connection signal="pressed" from="Control/Start" to="." method="_on_start_pressed"]

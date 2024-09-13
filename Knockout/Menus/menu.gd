@@ -1,7 +1,8 @@
-extends Control
+extends Node3D
 
 var load_client = preload("res://Client/client.tscn")
 var load_server = preload("res://Server/server.tscn")
+var tick = 0
 
 func wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
@@ -39,3 +40,15 @@ func _on_join_pressed():
 	client_instance.multiplayer_type = "player"
 	get_parent().add_child(client_instance)
 	self.queue_free()
+
+
+
+func _physics_process(_delta):
+	var i = tick%720
+	$Camera3D.position = Vector3(10.0*cos(deg_to_rad(float(i)*0.5)),10,10.0*sin(deg_to_rad(float(i)*0.5)))
+	$Camera3D.look_at(Vector3(0,5,0))
+	tick += 1
+
+
+func _on_joinserver_pressed():
+	pass # Replace with function body.

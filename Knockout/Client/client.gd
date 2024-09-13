@@ -8,16 +8,19 @@ func debug(tprint):
 
 func _ready() -> void:
 	debug("Connected as " + multiplayer_type)
+	if multiplayer_type != "admin":
+		$Control.queue_free()
 
 func _process(_delta) -> void:
-	if !game_started: return
-	get_node("../Server").send_positional(get_node("Player"))
+	if game_started:
+		get_node("../Server").send_positional(get_node("Player"))
 
 func start_game():
 	game_started = true
 	var opp = load("res://Client/player.tscn").instantiate()
 	opp.name = "Opponent"
 	opp.is_auth = false
+	opp.position = Vector3(0,-9999,0)
 	add_child(opp)
 
 func update_opponent_positional(data: Array):
@@ -26,9 +29,11 @@ func update_opponent_positional(data: Array):
 	opp.velocity = data[1]
 	opp.quaternion = data[2]
 
-func _on_button_pressed():
-	get_node("../Server").ping_server()
 
-
-func _on_button_2_pressed():
+func _on_start_pressed():
 	get_node("../Server").event_start()
+	get_node("Control").queue_free()
+
+
+#func _on_ping_pressed():
+	#get_node("../Server").ping_server()
