@@ -9,6 +9,12 @@
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_61x8s")
 
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.706898, -0.559104)
+radius = 0.0339222
+height = 0.5315
+sides = 24
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_kmwua")
 
@@ -21,9 +27,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.0623427)
 target_position = Vector3(0, -2, 0)
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.00690496, -0.498989)
-radius = 0.0339222
-height = 0.5315
-sides = 24
