@@ -1,19 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://bgqu04neoeayj"]
+[gd_scene load_steps=5 format=3 uid="uid://bgqu04neoeayj"]
 
 [ext_resource type="Script" path="res://Client/player.gd" id="1_61x8s"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fhnbn"]
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_kmwua"]
+material = SubResource("StandardMaterial3D_fhnbn")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nwhx5"]
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_61x8s")
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.706898, -0.559104)
-radius = 0.0339222
-height = 0.5315
-sides = 24
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_kmwua")

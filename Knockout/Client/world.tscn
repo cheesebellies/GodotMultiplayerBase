@@ -15,7 +15,7 @@ albedo_texture = ExtResource("2_q5idp")
 uv1_scale = Vector3(4, 4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cmnh7"]
-size = Vector3(8, 8, 1)
+size = Vector3(8, 8, 8)
 
 [node name="World" type="Node3D"]
 
