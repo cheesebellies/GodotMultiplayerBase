@@ -18,6 +18,50 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.35131, 0)
 transform = Transform3D(0.701531, 0.364004, -0.612663, 0, 0.85971, 0.510783, 0.712639, -0.35833, 0.603113, 0, 0, 0)
 light_energy = 1.001
 
+[node name="MainMenu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MainMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/CenterContainer"]
+custom_minimum_size = Vector2(800, 300)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Play" type="Button" parent="MainMenu/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Play
+"
+
+[node name="Settings" type="Button" parent="MainMenu/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Settings"
+
+[node name="Quit" type="Button" parent="MainMenu/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Quit"
+
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
@@ -26,7 +70,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="Control"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,24 +78,46 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
-custom_minimum_size = Vector2(400, 400)
+[node name="Host" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+size_flags_horizontal = 3
 
-[node name="Host" type="Button" parent="Control/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 190)
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/HBoxContainer/Host"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="LineEdit" parent="Control/HBoxContainer/Host/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_uneditable_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/focus = ExtResource("2_ejfqt")
+theme_override_styles/read_only = ExtResource("2_ejfqt")
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Port"
+alignment = 1
+editable = false
+
+[node name="LineEdit" type="LineEdit" parent="Control/HBoxContainer/Host/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "9999"
+placeholder_text = "9999"
+alignment = 1
+
+[node name="Button" type="Button" parent="Control/HBoxContainer/Host"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 theme_override_styles/normal = ExtResource("2_ejfqt")
 text = "Host"
 
-[node name="Join" type="Button" parent="Control/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 190)
+[node name="Join" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = ExtResource("2_ejfqt")
-text = "Join"
+size_flags_horizontal = 3
 
-[connection signal="pressed" from="Control/CenterContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Control/CenterContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[node name="Details" type="VBoxContainer" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="pressed" from="MainMenu/CenterContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
