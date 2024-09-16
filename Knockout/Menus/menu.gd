@@ -54,14 +54,13 @@ func _on_quit_pressed():
 	get_tree().quit()
 
 
-
-func _on_server_scanner_received_server_ping(ip, player_count, server_name):
-	print("\"" + str(server_name) + "\" [" + str(ip) + "] @ " + str(player_count) + "/16 Players")
-
-
 func _on_button_pressed() -> void:
 	$ServerScanner.setup_listener()
 
 
 func _on_button_2_pressed() -> void:
 	$ServerScanner.setup_broadcast()
+
+
+func _on_server_scanner_server_found(ip, player_count, server_name):
+	print("\"" + str(server_name) + "\" [" + str(ip) + "] @ " + str(player_count) + "/16 Players")

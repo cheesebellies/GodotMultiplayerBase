@@ -151,12 +151,6 @@ theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = ExtResource("2_ejfqt")
 text = "Refresh"
 
-[node name="Control" type="Button" parent="Control/HBoxContainer/Join"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = ExtResource("2_ejfqt")
-text = " this is a test"
-
 [node name="Details" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -185,6 +179,6 @@ text = "start"
 
 [connection signal="pressed" from="MainMenu/CenterContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="Control/HBoxContainer/Host/Button" to="." method="_on_host_pressed"]
-[connection signal="received_server_ping" from="ServerScanner" to="." method="_on_server_scanner_received_server_ping"]
+[connection signal="server_found" from="ServerScanner" to="." method="_on_server_scanner_server_found"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Button2" to="." method="_on_button_2_pressed"]

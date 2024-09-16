@@ -6,3 +6,4 @@
 script = ExtResource("1_l1vdr")
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
