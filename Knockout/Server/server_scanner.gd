@@ -15,7 +15,7 @@ func setup_listener():
 func setup_broadcast():
 	broadcast = PacketPeerUDP.new()
 	broadcast.set_broadcast_enabled(true)
-	broadcast.set_dest_address('10.60.255.255',9986)
+	broadcast.set_dest_address('255.255.255.255',9986)
 	var res = broadcast.bind(9989)
 	assert(res == OK, "Failed to start server status broadcast. Code " + str(res))
 	$Timer.timeout.connect(_loop)
