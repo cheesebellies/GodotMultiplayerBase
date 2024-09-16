@@ -3,7 +3,7 @@ extends Node
 var broadcast:PacketPeerUDP
 var listen:PacketPeerUDP
 @export var player_count: int = 0
-signal received_server_ping(ip,port,player_count)
+signal received_server_ping(ip,player_count)
 
 func setup_listener():
 	listen = PacketPeerUDP.new()
@@ -30,9 +30,9 @@ func _loop():
 	elif listen:
 		if listen.get_available_packet_count() > 0:
 			var ip = listen.get_packet_ip()
-			var port = listen.get_packet_port()
 			var player_count = listen.get_packet().decode_u8(0)
-			received_server_ping.emit(ip,port,player_count)
+			if ip != "":
+				received_server_ping.emit(ip,player_count)
 
 func clean_up():
 	if broadcast: broadcast.close()

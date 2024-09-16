@@ -55,8 +55,8 @@ func _on_quit_pressed():
 
 
 
-func _on_server_scanner_received_server_ping(ip, port, player_count):
-	print(str(ip) + ":" + str(port) + " @ " + str(player_count) + "/16 Players")
+func _on_server_scanner_received_server_ping(ip, player_count):
+	print(str(ip) + " @ " + str(player_count) + "/16 Players")
 
 
 func _on_button_pressed() -> void:
