@@ -151,6 +151,12 @@ theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = ExtResource("2_ejfqt")
 text = "Refresh"
 
+[node name="Control" type="Button" parent="Control/HBoxContainer/Join"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = " this is a test"
+
 [node name="Details" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -161,23 +167,24 @@ size_flags_horizontal = 3
 anchors_preset = -1
 anchor_right = 0.523
 anchor_bottom = 0.597
-offset_left = 446.0
-offset_top = 53.0
-offset_right = 162.504
-offset_bottom = -130.856
+offset_left = 47.0
+offset_top = 483.0
+offset_right = -296.496
+offset_bottom = 253.144
 text = "list"
 
 [node name="Button2" type="Button" parent="."]
 anchors_preset = -1
 anchor_right = 0.523
 anchor_bottom = 0.597
-offset_left = 95.0
-offset_top = 270.0
-offset_right = -188.496
-offset_bottom = 86.144
+offset_left = 18.0
+offset_top = 239.0
+offset_right = -265.496
+offset_bottom = 55.144
 text = "start"
 
 [connection signal="pressed" from="MainMenu/CenterContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="Control/HBoxContainer/Host/Button" to="." method="_on_host_pressed"]
 [connection signal="received_server_ping" from="ServerScanner" to="." method="_on_server_scanner_received_server_ping"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Button2" to="." method="_on_button_2_pressed"]

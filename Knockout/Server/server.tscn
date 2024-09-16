@@ -4,3 +4,5 @@
 
 [node name="Server" type="Node"]
 script = ExtResource("1_visfc")
+
+[node name="Timer" type="Timer" parent="."]
