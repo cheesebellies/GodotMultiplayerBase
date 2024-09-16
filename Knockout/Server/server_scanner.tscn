@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5o718jutgfht"]
+
+[ext_resource type="Script" path="res://Server/server_scanner.gd" id="1_l1vdr"]
+
+[node name="ServerScanner" type="Node"]
+script = ExtResource("1_l1vdr")
+
+[node name="Timer" type="Timer" parent="."]

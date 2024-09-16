@@ -89,7 +89,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_uneditable_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 25
 theme_override_styles/focus = ExtResource("2_ejfqt")
 theme_override_styles/read_only = ExtResource("2_ejfqt")
 theme_override_styles/normal = ExtResource("2_ejfqt")
@@ -106,6 +106,30 @@ text = "9999"
 placeholder_text = "9999"
 alignment = 1
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/HBoxContainer/Host"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="LineEdit" parent="Control/HBoxContainer/Host/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_uneditable_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 25
+theme_override_styles/focus = ExtResource("2_ejfqt")
+theme_override_styles/read_only = ExtResource("2_ejfqt")
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Max Players"
+alignment = 1
+editable = false
+
+[node name="LineEdit" type="LineEdit" parent="Control/HBoxContainer/Host/HBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "16"
+placeholder_text = "9999"
+alignment = 1
+
 [node name="Button" type="Button" parent="Control/HBoxContainer/Host"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
@@ -115,6 +139,16 @@ text = "Host"
 [node name="Join" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/HBoxContainer/Join"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Control/HBoxContainer/Join/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = ExtResource("2_ejfqt")
+text = "Refresh"
 
 [node name="Details" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
