@@ -7,7 +7,7 @@ signal received_server_ping(ip,port,player_count)
 
 func setup_listener():
 	listen = PacketPeerUDP.new()
-	var res = listen.bind(2567)
+	var res = listen.bind(9986)
 	assert(res == OK, "Failed to start server scanner. Code " + str(res))
 	$Timer.timeout.connect(_loop)
 	$Timer.start()
@@ -15,8 +15,8 @@ func setup_listener():
 func setup_broadcast():
 	broadcast = PacketPeerUDP.new()
 	broadcast.set_broadcast_enabled(true)
-	broadcast.set_dest_address('10.60.255.255',2567)
-	var res = broadcast.bind(2568)
+	broadcast.set_dest_address('10.60.255.255',9986)
+	var res = broadcast.bind(9989)
 	assert(res == OK, "Failed to start server status broadcast. Code " + str(res))
 	$Timer.timeout.connect(_loop)
 	$Timer.start()
@@ -33,3 +33,7 @@ func _loop():
 			var port = listen.get_packet_port()
 			var player_count = listen.get_packet().decode_u8(0)
 			received_server_ping.emit(ip,port,player_count)
+
+func clean_up():
+	if broadcast: broadcast.close()
+	if listen: listen.close()

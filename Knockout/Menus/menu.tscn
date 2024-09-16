@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://37pf3hx8m6b8"]
+[gd_scene load_steps=5 format=3 uid="uid://37pf3hx8m6b8"]
 
 [ext_resource type="Script" path="res://Menus/menu.gd" id="1_wxrt3"]
 [ext_resource type="StyleBox" uid="uid://678gbkthcvuy" path="res://Assets/basic_button.tres" id="2_ejfqt"]
 [ext_resource type="ArrayMesh" uid="uid://1de1l3j34f2u" path="res://Assets/10680_Dog_v2.obj" id="2_wrxcg"]
+[ext_resource type="PackedScene" uid="uid://b5o718jutgfht" path="res://Server/server_scanner.tscn" id="4_vn55o"]
 
 [node name="Menu" type="Node3D"]
 script = ExtResource("1_wxrt3")
@@ -154,4 +155,29 @@ text = "Refresh"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="ServerScanner" parent="." instance=ExtResource("4_vn55o")]
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = -1
+anchor_right = 0.523
+anchor_bottom = 0.597
+offset_left = 446.0
+offset_top = 53.0
+offset_right = 162.504
+offset_bottom = -130.856
+text = "list"
+
+[node name="Button2" type="Button" parent="."]
+anchors_preset = -1
+anchor_right = 0.523
+anchor_bottom = 0.597
+offset_left = 95.0
+offset_top = 270.0
+offset_right = -188.496
+offset_bottom = 86.144
+text = "start"
+
 [connection signal="pressed" from="MainMenu/CenterContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="received_server_ping" from="ServerScanner" to="." method="_on_server_scanner_received_server_ping"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Button2" to="." method="_on_button_2_pressed"]

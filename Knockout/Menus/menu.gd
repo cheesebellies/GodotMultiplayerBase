@@ -52,3 +52,16 @@ func _physics_process(_delta):
 
 func _on_quit_pressed():
 	get_tree().quit()
+
+
+
+func _on_server_scanner_received_server_ping(ip, port, player_count):
+	print(str(ip) + ":" + str(port) + " @ " + str(player_count) + "/16 Players")
+
+
+func _on_button_pressed() -> void:
+	$ServerScanner.setup_listener()
+
+
+func _on_button_2_pressed() -> void:
+	$ServerScanner.setup_broadcast()
