@@ -6,8 +6,8 @@ extends Node
 
 
 
-const PORT: int = 9999
-const MAX_CLIENTS: int = 16
+#
+
 
 
 #Enums
@@ -23,6 +23,8 @@ enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_I
 
 
 @export var multiplayer_type: String = ""
+@export var multiplayer_port: int = 9999
+@export var multiplayer_player_limit: int = 16
 
 
 
@@ -52,14 +54,14 @@ func debuge(tprint):
 
 func init():
 	if multiplayer_type != "endpoint":
-		enet_peer.create_server(PORT,MAX_CLIENTS)
+		enet_peer.create_server(multiplayer_port,multiplayer_player_limit)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_connected.connect(_peer_connected)
 		multiplayer.peer_disconnected.connect(_peer_disconnected)
 		multiplayer.peer_packet.connect(_server_packet_received)
 		debugs("Online")
 	else:
-		enet_peer.create_client("localhost", PORT)
+		enet_peer.create_client("localhost", multiplayer_port)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
 		debuge("Connected to server")
