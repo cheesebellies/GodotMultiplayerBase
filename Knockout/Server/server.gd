@@ -146,6 +146,8 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 #Packet functions
 
+
+
 func send_hit(vel: Vector3):
 	var packet = PackedByteArray()
 	packet.resize(13)
