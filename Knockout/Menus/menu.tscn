@@ -153,9 +153,6 @@ text = "Host"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/HBoxContainer/Join"]
-layout_mode = 2
-
 [node name="Details" type="VBoxContainer" parent="Control/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3

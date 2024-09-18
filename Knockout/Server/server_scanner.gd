@@ -5,9 +5,10 @@ var listen:PacketPeerUDP
 
 var player_count: int = 1
 @export var host_name: String = "Game"
+@export var port: int = 9999
 
 var connected_peers = []
-signal server_found(ip,player_count,server_name)
+signal server_found(ip,player_count,server_name, port)
 
 func _ready():
 	$Timer.timeout.connect(_detection)
@@ -38,8 +39,9 @@ func _detection():
 
 func broadcast_status():
 	var packet = PackedByteArray()
-	packet.resize(1)
+	packet.resize(5)
 	packet.encode_u8(0,player_count)
+	packet.encode_u32(1,port)
 	packet.append_array(host_name.to_ascii_buffer())
 	broadcast.put_packet(packet)
 
@@ -48,9 +50,10 @@ func detect_server():
 		var ip = listen.get_packet_ip()
 		var packet = listen.get_packet()
 		var local_player_count = packet.decode_u8(0)
-		var server_name = packet.slice(1).get_string_from_ascii()
+		var local_port = packet.decode_u32(1)
+		var server_name = packet.slice(5).get_string_from_ascii()
 		if ip != "":
-			server_found.emit(ip,local_player_count,server_name)
+			server_found.emit(ip,local_player_count,server_name,local_port)
 
 func clean_up():
 	if broadcast: broadcast.close()

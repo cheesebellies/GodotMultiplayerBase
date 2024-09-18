@@ -23,6 +23,7 @@ enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_I
 
 
 @export var multiplayer_type: String = ""
+@export var multiplayer_ip: String = "localhost"
 @export var multiplayer_port: int = 9999
 @export var multiplayer_player_limit: int = 16
 
@@ -61,10 +62,11 @@ func init():
 		multiplayer.peer_packet.connect(_server_packet_received)
 		debugs("Online")
 	else:
-		enet_peer.create_client("localhost", multiplayer_port)
+		enet_peer.create_client(multiplayer_ip, multiplayer_port)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
 		debuge("Connected to server")
+
 
 func _ready():
 	# Multiplayer functions get reset after added to tree, any changes in init

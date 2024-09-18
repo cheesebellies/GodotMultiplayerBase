@@ -4,7 +4,7 @@ var load_client = preload("res://Client/client.tscn")
 var load_server = preload("res://Server/server.tscn")
 var load_server_scanner = preload("res://Server/server_scanner.tscn")
 var tick = 0
-var scantick = 0
+var tte = 0.0
 var servers = {}
 
 
@@ -42,15 +42,20 @@ func _on_host_pressed():
 	scanner.name = "Scanner"
 	var hn = $Control/HBoxContainer/Host/HBoxContainer3/LineEdit.text
 	scanner.host_name = hn if hn else "Untitled Game"
+	scanner.port = mpp if mpp else 9999
 	get_parent().add_child(scanner)
 	get_tree().set_multiplayer(MultiplayerAPI.create_default_interface(),"/root/Scanner")
 	get_node("../Scanner").setup_broadcast()
 	self.queue_free()
 
-func _on_join_pressed():
+func join_server(ip, port):
+	get_node("ServerScanner").clean_up()
+	get_node("ServerScanner").queue_free()
 	var server_instance = load_server.instantiate()
 	server_instance.name = "Server"
 	server_instance.multiplayer_type = "endpoint"
+	server_instance.multiplayer_ip = ip
+	server_instance.multiplayer_port = port
 	get_parent().add_child(server_instance)
 	get_parent().get_node("Server").init()
 	var client_instance = load_client.instantiate()
@@ -61,30 +66,39 @@ func _on_join_pressed():
 
 func update_server_list():
 	for i in servers.keys():
-		if servers[i]["scantick"] < scantick - 2:
+		if servers[i]["tte"] < tte - 1.0:
+			print("erase " + i)
 			servers.erase(i)
+			get_node("Control/HBoxContainer/Join/" + i).queue_free()
 	var normstyle = load("res://Assets/basic_button.tres")
-	for i in get_node("Control/HBoxContainer/Join/HBoxContainer").get_children():
-		i.queue_free()
 	for server in servers.keys():
-		var butt = Button.new()
-		butt.toggle_mode = true
-		butt.text = servers[server]["name"] + " @ " + str(servers[server]["players"]) + "/16\n" + str(server)
-		butt.add_theme_stylebox_override("normal", normstyle)
-		butt.add_theme_font_size_override("font_size",25)
-		get_node("Control/HBoxContainer/Join/HBoxContainer").add_child(butt)
+		if !get_node_or_null("Control/HBoxContainer/Join/" + server):
+			var butt = Button.new()
+			butt.add_theme_font_size_override("font_size",30)
+			butt.text = servers[server]["name"] + " @ " + str(servers[server]["players"]) + "/16\n" + str(server)
+			butt.name = server
+			butt.pressed.connect(_join_server_info.bind(butt))
+			butt.add_theme_stylebox_override("normal", normstyle)
+			butt.add_theme_font_size_override("font_size",25)
+			get_node("Control/HBoxContainer/Join").add_child(butt)
 
-func _physics_process(_delta):
+func _join_server_info(button):
+	var binfo = button.name.split("_")
+	var ip = ".".join(binfo.slice(0,-1))
+	var port = int(binfo[-1])
+	join_server(ip,port)
+
+func _physics_process(delta):
 	var i = tick%720
 	$Camera3D.position = Vector3(10.0*cos(deg_to_rad(float(i)*0.5)),10,10.0*sin(deg_to_rad(float(i)*0.5)))
 	$Camera3D.look_at(Vector3(0,5,0))
 	tick += 1
+	tte += delta
+	update_server_list()
 
 func _on_quit_pressed():
 	get_tree().quit()
 
-func _on_server_scanner_server_found(ip, player_count, server_name):
-	scantick += 1
-	print("\"" + str(server_name) + "\" [" + str(ip) + "] @ " + str(player_count) + "/16 Players")
-	servers[ip] = {"scantick": scantick, "name": server_name, "players": player_count}
-	update_server_list()
+func _on_server_scanner_server_found(ip, player_count, server_name, port):
+	print("\"" + str(server_name) + "\" [" + str(ip) + ":" + str(port) + "] @ " + str(player_count) + "/16 Players")
+	servers[(ip + "_" + str(port)).replace(".","_")] = {"tte": tte, "name": server_name, "players": player_count}
