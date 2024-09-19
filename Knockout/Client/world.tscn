@@ -1,16 +1,24 @@
 [gd_scene load_steps=10 format=3 uid="uid://ddiwsa3s5efjd"]
 
-[ext_resource type="Material" uid="uid://c6yugpc6awofo" path="res://Client/world.tres" id="1_76pxl"]
 [ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="1_hvwqw"]
 [ext_resource type="Texture2D" uid="uid://c1mgq5q8aqoit" path="res://Assets/PrototypeTextures/prototype_512x512_yellow.png" id="2_q5idp"]
 
-[sub_resource type="Sky" id="Sky_4uh1o"]
-sky_material = ExtResource("1_76pxl")
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_2cqbr"]
+rayleigh_coefficient = 1.5
+rayleigh_color = Color(0.102, 0.2763, 0.6, 1)
+mie_eccentricity = 0.99
+mie_color = Color(0.81, 0.6156, 0.6156, 1)
+turbidity = 5.0
+ground_color = Color(0.396078, 0.690196, 0.839216, 1)
+energy_multiplier = 10.0
+
+[sub_resource type="Sky" id="Sky_cnphj"]
+sky_material = SubResource("PhysicalSkyMaterial_2cqbr")
 
 [sub_resource type="Environment" id="Environment_ey8ts"]
 background_mode = 2
 background_energy_multiplier = 0.5
-sky = SubResource("Sky_4uh1o")
+sky = SubResource("Sky_cnphj")
 fog_mode = 1
 fog_density = 1.0
 volumetric_fog_density = 0.0185
@@ -31,6 +39,11 @@ uv1_scale = Vector3(4, 4, 4)
 size = Vector3(8, 8, 8)
 
 [node name="World" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.940389, 0.282882, 0.188802, -1.77636e-15, -0.555135, 0.83176, 0.340101, -0.782178, -0.522043, 0, 39.0068, 0)
+shadow_enabled = true
+directional_shadow_blend_splits = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ey8ts")
