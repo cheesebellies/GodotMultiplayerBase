@@ -10,7 +10,8 @@ var servers = {}
 
 
 func _ready():
-	get_node("ServerScanner").setup_listener()
+	var res = get_node("ServerScanner").setup_listener()
+	$Control/LineEdit.text = "Scanning ON" if res != ERR_ALREADY_IN_USE else "Scanning ERROR"
 
 func _on_host_pressed():
 	get_node("ServerScanner").clean_up()

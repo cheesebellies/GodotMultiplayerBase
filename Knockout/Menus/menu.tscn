@@ -109,6 +109,20 @@ text = "Host"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="LineEdit" type="LineEdit" parent="Control"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Scanning OFF"
+editable = false
+
 [node name="ServerScanner" parent="." instance=ExtResource("4_vn55o")]
 
 [connection signal="pressed" from="Control/HBoxContainer/Host/Button" to="." method="_on_host_pressed"]

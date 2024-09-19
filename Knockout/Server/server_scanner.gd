@@ -19,16 +19,23 @@ func setup_listener():
 	if res == OK:
 		print("Started listening")
 		$Timer.start()
+		return OK
 	else:
 		print("Failed to start server scanner. Code " + str(res))
+		return ERR_ALREADY_IN_USE
 
 func setup_broadcast():
 	broadcast = PacketPeerUDP.new()
 	broadcast.set_broadcast_enabled(true)
 	broadcast.set_dest_address('255.255.255.255',9986)
 	var res = broadcast.bind(9989)
-	print(("Failed to start server status broadcast. Code " + str(res)) if res != OK else "Started broadcasting")
-	$Timer.start()
+	if res == OK:
+		print("Started broadcasting")
+		$Timer.start()
+		return OK
+	else:
+		print("Failed to start server status broadcast. Code " + str(res))
+		return ERR_ALREADY_IN_USE
 
 func _detection():
 	if broadcast:
