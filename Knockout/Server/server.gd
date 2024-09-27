@@ -81,6 +81,17 @@ func _process(_delta):
 
 
 
+func make_pairings():
+	var pl = multiplayer.get_peers()
+	var fl = {}
+	for i in range(0,len(pl),2):
+		if (len(pl) - i) < 2:
+			fl[pl[i]] = -1
+			break
+		fl[pl[i]] = pl[i+1]
+		fl[pl[i+1]] = pl[i]
+	pairings = fl
+
 func update_position(packet: PackedByteArray):
 	var data = unpack_positional(packet)
 	get_node("../Client").update_opponent_positional(data)
@@ -204,6 +215,7 @@ func ping_server():
 
 
 func _peer_disconnected(id):
+	
 	debugs("Peer disconnected: " + str(id))
 
 func _peer_connected(id):
@@ -221,7 +233,7 @@ func _endpoint_packet_received(id: int, packet: PackedByteArray):
 				start_game()
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
-	#debuge("Received packet from #-" + str(id))
+
 
 func _server_packet_received(id: int, packet: PackedByteArray):
 	var packet_type = packet.decode_u8(0)
@@ -233,10 +245,7 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == 0:
 				multiplayer.multiplayer_peer.refuse_new_connections = true
-				var peers = multiplayer.get_peers()
-				pairings[peers[0]] = peers[1]
-				pairings[peers[1]] = peers[0]
+				make_pairings()
 				event_start_echo()
 		PACKET_TYPE_IMPULSE:
 			echo_hit(id,packet)
-	#debugs("Received packet from #-" + str(id))

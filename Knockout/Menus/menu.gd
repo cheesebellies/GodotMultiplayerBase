@@ -101,5 +101,9 @@ func _on_quit_pressed():
 	get_tree().quit()
 
 func _on_server_scanner_server_found(ip, player_count, server_name, port):
-	print("\"" + str(server_name) + "\" [" + str(ip) + ":" + str(port) + "] @ " + str(player_count) + "/16 Players")
+	#print("\"" + str(server_name) + "\" [" + str(ip) + ":" + str(port) + "] @ " + str(player_count) + "/16 Players")
 	servers[(ip + "_" + str(port)).replace(".","_")] = {"tte": tte, "name": server_name, "players": player_count}
+
+
+func _on_fjl_pressed() -> void:
+	join_server("localhost",9999)

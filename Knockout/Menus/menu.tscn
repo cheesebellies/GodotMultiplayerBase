@@ -109,6 +109,12 @@ text = "Host"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="fjl" type="Button" parent="Control/HBoxContainer/Join"]
+layout_mode = 2
+text = "forcejoin local
+
+"
+
 [node name="LineEdit" type="LineEdit" parent="Control"]
 layout_mode = 1
 anchors_preset = 3
@@ -126,4 +132,5 @@ editable = false
 [node name="ServerScanner" parent="." instance=ExtResource("4_vn55o")]
 
 [connection signal="pressed" from="Control/HBoxContainer/Host/Button" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Control/HBoxContainer/Join/fjl" to="." method="_on_fjl_pressed"]
 [connection signal="server_found" from="ServerScanner" to="." method="_on_server_scanner_server_found"]

@@ -16,7 +16,7 @@ func _input(event):
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			if $Camera3D/RayCast3D.is_colliding():
 				get_parent().hit_opponent((get_node("../Opponent").position - self.position).normalized() + Vector3(0,1.5,0))
-	var ncams = 0.002
+	var ncams = 0.001
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * ncams)
 		$Camera3D.rotate_x(-event.relative.y * ncams)
