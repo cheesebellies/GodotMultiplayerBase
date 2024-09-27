@@ -43,9 +43,10 @@ var enet_peer = ENetMultiplayerPeer.new()
 
 
 func debugs(tprint):
-	print("[Server] " + str(tprint))
+	print("[Server] \t\t" + str(tprint))
+
 func debuge(tprint):
-	print("[Endpoint #-" + str(multiplayer.get_unique_id()) + "] " + str(tprint))
+	print("[" + str(multiplayer.get_unique_id()) + "]   \t" + str(tprint))
 
 
 
@@ -65,7 +66,7 @@ func init():
 		enet_peer.create_client(multiplayer_ip, multiplayer_port)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
-		debuge("Connected to server")
+		debuge("Connected")
 
 
 func _ready():
@@ -103,8 +104,11 @@ func apply_impulse(packet: PackedByteArray):
 	impulse.z = packet.decode_float(9)
 	get_node("../Client").apply_player_positional(impulse)
 
-func start_game():
-	get_node("../Client").start_game()
+func start_game(isPlaying: int):
+	if isPlaying == 0:
+		get_node("../Client").start_game()
+	else:
+		debuge("(insert spectation code here)")
 
 
 
@@ -184,10 +188,15 @@ func echo_positional(id: int, packet: PackedByteArray):
 
 func event_start_echo():
 	var packet = PackedByteArray()
-	packet.resize(2)
+	packet.resize(3)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
 	packet.encode_u8(1,0)
-	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
+	for peer in multiplayer.get_peers():
+		if pairings[peer] != -1:
+			packet.encode_u8(2,0)
+		else:
+			packet.encode_u8(2,1)
+		multiplayer.send_bytes(packet,peer,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func event_start():
 	var packet = PackedByteArray()
@@ -230,7 +239,7 @@ func _endpoint_packet_received(id: int, packet: PackedByteArray):
 			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == 0:
-				start_game()
+				start_game(packet.decode_u8(2))
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 

@@ -10,6 +10,9 @@ var player_count: int = 1
 var connected_peers = []
 signal server_found(ip,player_count,server_name, port)
 
+func debug(msg):
+	print("[Scanner] \t\t" + str(msg))
+
 func _ready():
 	$Timer.timeout.connect(_detection)
 
@@ -17,11 +20,11 @@ func setup_listener():
 	listen = PacketPeerUDP.new()
 	var res = listen.bind(9986)
 	if res == OK:
-		print("Started listening")
+		debug("Started listening")
 		$Timer.start()
 		return OK
 	else:
-		print("Failed to start server scanner. Code " + str(res))
+		debug("Failed to start server scanner. Code " + str(res))
 		return ERR_ALREADY_IN_USE
 
 func setup_broadcast():
@@ -30,11 +33,11 @@ func setup_broadcast():
 	broadcast.set_dest_address('255.255.255.255',9986)
 	var res = broadcast.bind(9989)
 	if res == OK:
-		print("Started broadcasting")
+		debug("Started broadcasting")
 		$Timer.start()
 		return OK
 	else:
-		print("Failed to start server status broadcast. Code " + str(res))
+		debug("Failed to start server status broadcast. Code " + str(res))
 		return ERR_ALREADY_IN_USE
 
 func _detection():

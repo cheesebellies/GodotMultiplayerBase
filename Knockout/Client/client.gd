@@ -4,7 +4,7 @@ extends Node
 @export var game_started: bool = false
 
 func debug(tprint):
-	print("[Client] " + str(tprint))
+	print("[Client] \t\t" + str(tprint))
 
 func _ready() -> void:
 	debug("Connected as " + multiplayer_type)

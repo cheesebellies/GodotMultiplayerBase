@@ -7,7 +7,8 @@ var tick = 0
 var tte = 0.0
 var servers = {}
 
-
+func debug(msg):
+	print("[Menu] \t\t" + str(msg))
 
 func _ready():
 	var res = get_node("ServerScanner").setup_listener()
