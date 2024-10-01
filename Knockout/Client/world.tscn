@@ -21,7 +21,7 @@ background_energy_multiplier = 0.5
 sky = SubResource("Sky_cnphj")
 fog_mode = 1
 fog_density = 1.0
-volumetric_fog_density = 0.0185
+volumetric_fog_density = 0.0025
 volumetric_fog_emission = Color(0.635799, 0.635799, 0.635799, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hq45l"]
