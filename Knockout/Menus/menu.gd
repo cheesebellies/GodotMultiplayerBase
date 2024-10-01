@@ -69,7 +69,6 @@ func join_server(ip, port):
 func update_server_list():
 	for i in servers.keys():
 		if servers[i]["tte"] < tte - 1.0:
-			print("erase " + i)
 			servers.erase(i)
 			get_node("Control/HBoxContainer/Join/" + i).queue_free()
 	var normstyle = load("res://Assets/basic_button.tres")

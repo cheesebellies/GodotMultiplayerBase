@@ -43,7 +43,10 @@ func _physics_process(delta):
 			velocity.x *= 0.675
 			velocity.z *= 0.675
 		velocity.y -= GRAVITY
-		velocity.x = clamp(velocity.x,-SPEED, SPEED)
-		velocity.z = clamp(velocity.z,-SPEED, SPEED)
+		var xyvel = Vector3(velocity.x,0.0,velocity.z)
+		if xyvel.length() > SPEED:
+			var modxyvel = xyvel.normalized()*SPEED
+			velocity.x = modxyvel.x
+			velocity.z = modxyvel.z
 	move_and_slide()
 	just_hit = false
