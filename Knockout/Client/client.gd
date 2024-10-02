@@ -2,6 +2,7 @@ extends Node
 
 @export var multiplayer_type: String = ""
 @export var game_started: bool = false
+var has_opponent = true
 
 func debug(tprint):
 	print("[Client] \t\t" + str(tprint))
@@ -12,7 +13,7 @@ func _ready() -> void:
 		$Control.queue_free()
 
 func _physics_process(_delta: float) -> void:
-	if game_started:
+	if game_started and has_opponent:
 		get_node("../Server").send_positional(get_node("Player"))
 
 func start_game():
@@ -32,6 +33,18 @@ func update_opponent_positional(data: Array):
 func apply_player_positional(impulse: Vector3):
 	get_node("Player").velocity += impulse
 	get_node("Player").just_hit = true
+
+func remove_opponent():
+	has_opponent = false
+	get_node("Opponent").queue_free()
+	var msg = TextEdit.new()
+	msg.text = "Opponent disconnected"
+	msg.editable = false
+	msg.custom_minimum_size = Vector2(300,50)
+	msg.add_theme_font_size_override("font_size",25)
+	get_node("Player").add_child(msg)
+	await get_tree().create_timer(5.0).timeout
+	msg.queue_free()
 
 func hit_opponent(normal: Vector3):
 	get_node("../Server").send_hit(normal*2.0)

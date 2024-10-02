@@ -15,6 +15,7 @@ extends Node
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END}
 
 
 
@@ -110,6 +111,10 @@ func start_game(isPlaying: int):
 	else:
 		debuge("(insert spectation code here)")
 
+func handle_player_disconnect():
+	get_node("../Client").remove_opponent()
+	debuge("Opponent disconnected")
+
 
 
 #Bit processing
@@ -167,6 +172,13 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 
 
+func alert_player_leave(id: int):
+	var packet = PackedByteArray()
+	packet.resize(2)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PLAYER_LEAVE)
+	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
+
 func send_hit(vel: Vector3):
 	var packet = PackedByteArray()
 	packet.resize(13)
@@ -190,7 +202,7 @@ func event_start_echo():
 	var packet = PackedByteArray()
 	packet.resize(3)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
-	packet.encode_u8(1,0)
+	packet.encode_u8(1,EVENT_TYPE_GAME_START)
 	for peer in multiplayer.get_peers():
 		if pairings[peer] != -1:
 			packet.encode_u8(2,0)
@@ -202,7 +214,7 @@ func event_start():
 	var packet = PackedByteArray()
 	packet.resize(2)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
-	packet.encode_u8(1,0)
+	packet.encode_u8(1,EVENT_TYPE_GAME_START)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_response(id):
@@ -224,7 +236,7 @@ func ping_server():
 
 
 func _peer_disconnected(id):
-	
+	alert_player_leave(id)
 	debugs("Peer disconnected: " + str(id))
 
 func _peer_connected(id):
@@ -238,8 +250,10 @@ func _endpoint_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_PING:
 			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
-			if packet.decode_u8(1) == 0:
+			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				start_game(packet.decode_u8(2))
+			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_LEAVE:
+				handle_player_disconnect()
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 
@@ -252,7 +266,7 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_PING:
 			ping_response(id)
 		PACKET_TYPE_EVENT:
-			if packet.decode_u8(1) == 0:
+			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				multiplayer.multiplayer_peer.refuse_new_connections = true
 				make_pairings()
 				event_start_echo()
