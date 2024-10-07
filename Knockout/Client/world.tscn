@@ -21,8 +21,10 @@ background_energy_multiplier = 0.5
 sky = SubResource("Sky_cnphj")
 fog_mode = 1
 fog_density = 1.0
-volumetric_fog_density = 0.0025
-volumetric_fog_emission = Color(0.635799, 0.635799, 0.635799, 1)
+volumetric_fog_density = 0.2578
+volumetric_fog_albedo = Color(0.135012, 0.135012, 0.135012, 1)
+volumetric_fog_emission = Color(0.133333, 0.133333, 0.537255, 1)
+volumetric_fog_emission_energy = 0.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hq45l"]
 albedo_texture = ExtResource("1_hvwqw")

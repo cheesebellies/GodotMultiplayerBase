@@ -34,6 +34,7 @@ enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END}
 
 
 
+var client: Node = null
 var pairings = {}
 var enet_peer = ENetMultiplayerPeer.new()
 
@@ -74,8 +75,9 @@ func _ready():
 	# Multiplayer functions get reset after added to tree, any changes in init
 	pass
 
-func _process(_delta):
-	pass
+func _physics_process(_delta):
+	if multiplayer_type != "endpoint": return
+	exists_ping()
 
 
 
@@ -96,23 +98,23 @@ func make_pairings():
 
 func update_position(packet: PackedByteArray):
 	var data = unpack_positional(packet)
-	get_node("../Client").update_opponent_positional(data)
+	client.update_opponent_positional(data)
 
 func apply_impulse(packet: PackedByteArray):
 	var impulse = Vector3()
 	impulse.x = packet.decode_float(1)
 	impulse.y = packet.decode_float(5)
 	impulse.z = packet.decode_float(9)
-	get_node("../Client").apply_player_positional(impulse)
+	client.apply_player_positional(impulse)
 
 func start_game(isPlaying: int):
 	if isPlaying == 0:
-		get_node("../Client").start_game()
+		client.start_game()
 	else:
 		debuge("(insert spectation code here)")
 
 func handle_player_disconnect():
-	get_node("../Client").remove_opponent()
+	client.remove_opponent()
 	debuge("Opponent disconnected")
 
 
@@ -144,9 +146,9 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 	# With PackedByteArray, 'double' is a normal float and
 	# 'float' is the 32 bit version
 	#
-	# Position: Vector3: 3 floats (4, 4, 4 bytes)
-	# Velocity: Vector3: 3 floats (4, 4, 4 bytes)
-	# Rotation: Quaternion: 4 floats (4, 4, 4, 4 bytes)
+	# Position: Vector3: 3 floats (4, 4, 4) bytes
+	# Velocity: Vector3: 3 floats (4, 4, 4) bytes
+	# Rotation: Quaternion: 4 floats (4, 4, 4, 4) bytes
 	#***********************************************************
 	var pos = node.position
 	var vel = node.velocity
@@ -171,6 +173,13 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 #Packet functions
 
 
+
+func exists_ping():
+	var packet = PackedByteArray()
+	packet.resize(2)
+	packet.encode_u8(0,PACKET_TYPE_PING)
+	packet.encode_u8(0,0)
+	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,0)
 
 func alert_player_leave(id: int):
 	var packet = PackedByteArray()
@@ -219,14 +228,16 @@ func event_start():
 
 func ping_response(id):
 	var packet = PackedByteArray()
-	packet.resize(1)
+	packet.resize(2)
 	packet.encode_u8(0,PACKET_TYPE_PING)
+	packet.encode_u8(0,1)
 	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_server():
 	var packet = PackedByteArray()
-	packet.resize(1)
+	packet.resize(2)
 	packet.encode_u8(0,PACKET_TYPE_PING)
+	packet.encode_u8(0,1)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 
@@ -242,13 +253,16 @@ func _peer_disconnected(id):
 func _peer_connected(id):
 	debugs("Peer connected: " + str(id))
 
-func _endpoint_packet_received(id: int, packet: PackedByteArray):
+func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 	var packet_type = packet.decode_u8(0)
 	match packet_type:
 		PACKET_TYPE_POSITIONAL:
 			update_position(packet)
 		PACKET_TYPE_PING:
-			debuge("Ping Successful")
+			if packet.decode_u8(1) == 1:
+				debuge("Ping Successful")
+			else:
+				client.server_exists()
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				start_game(packet.decode_u8(2))
@@ -264,7 +278,8 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_POSITIONAL:
 			echo_positional(id, packet)
 		PACKET_TYPE_PING:
-			ping_response(id)
+			if packet.decode_u8(1) == 1:
+				ping_response(id)
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				multiplayer.multiplayer_peer.refuse_new_connections = true

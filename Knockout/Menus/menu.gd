@@ -40,6 +40,7 @@ func _on_host_pressed():
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "admin"
 	get_parent().get_node("clientroot").add_child(client_instance)
+	get_parent().get_node("clientroot/Server").client = get_parent().get_node("clientroot/Client")
 	var scanner = load_server_scanner.instantiate()
 	scanner.name = "Scanner"
 	var hn = $Control/HBoxContainer/Host/HBoxContainer3/LineEdit.text
@@ -64,6 +65,7 @@ func join_server(ip, port):
 	client_instance.name = "Client"
 	client_instance.multiplayer_type = "player"
 	get_parent().add_child(client_instance)
+	get_parent().get_node("Server").client = get_parent().get_node("Client")
 	self.queue_free()
 
 func update_server_list():
