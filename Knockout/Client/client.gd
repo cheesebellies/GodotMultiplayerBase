@@ -18,14 +18,7 @@ func _ready() -> void:
 		$Control.queue_free()
 	player = get_node("Player")
 
-func server_exists():
-	last = ticks
-
 func _physics_process(delta: float) -> void:
-	ticks += 1
-	tte += delta
-	if ticks-last > 60:
-		debug("Server disconnected")
 	if game_started and has_opponent:
 		get_node("../Server").send_positional(player)
 
@@ -66,6 +59,9 @@ func hit_opponent(normal: Vector3):
 func _on_start_pressed():
 	get_node("../Server").event_start()
 	get_node("Control").queue_free()
+	if !get_node_or_null("root/Scanner"): return
+	get_node("root/Scanner").clean_up()
+	get_node("root/Scanner").queue_free()
 
 
 #func _on_ping_pressed():

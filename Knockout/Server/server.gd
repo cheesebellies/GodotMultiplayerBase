@@ -6,10 +6,6 @@ extends Node
 
 
 
-#
-
-
-
 #Enums
 
 
@@ -68,6 +64,7 @@ func init():
 		enet_peer.create_client(multiplayer_ip, multiplayer_port)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
+		multiplayer.server_disconnected.connect(_endpoint_server_disconnect)
 		debuge("Connected")
 
 
@@ -75,15 +72,24 @@ func _ready():
 	# Multiplayer functions get reset after added to tree, any changes in init
 	pass
 
-func _physics_process(_delta):
-	if multiplayer_type != "endpoint": return
-	exists_ping()
-
 
 
 #Gameplay functions
 
 
+
+func return_to_menu(code: int):
+	print("[0]\t\t\tServer disconnected")
+	if code == 1:
+		pass
+	if multiplayer.is_server(): multiplayer.multiplayer_peer.close()
+	multiplayer.multiplayer_peer = null
+	get_node("../Client").queue_free()
+	var menu = load("res://Menus/menu.tscn").instantiate()
+	menu.name = "Menu"
+	get_node("/root").add_child(menu)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	self.queue_free()
 
 func make_pairings():
 	var pl = multiplayer.get_peers()
@@ -174,13 +180,6 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 
 
-func exists_ping():
-	var packet = PackedByteArray()
-	packet.resize(2)
-	packet.encode_u8(0,PACKET_TYPE_PING)
-	packet.encode_u8(0,0)
-	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,0)
-
 func alert_player_leave(id: int):
 	var packet = PackedByteArray()
 	packet.resize(2)
@@ -228,16 +227,14 @@ func event_start():
 
 func ping_response(id):
 	var packet = PackedByteArray()
-	packet.resize(2)
+	packet.resize(1)
 	packet.encode_u8(0,PACKET_TYPE_PING)
-	packet.encode_u8(0,1)
 	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func ping_server():
 	var packet = PackedByteArray()
-	packet.resize(2)
+	packet.resize(1)
 	packet.encode_u8(0,PACKET_TYPE_PING)
-	packet.encode_u8(0,1)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 
@@ -245,6 +242,9 @@ func ping_server():
 #Signals
 
 
+
+func _endpoint_server_disconnect():
+	return_to_menu(1)
 
 func _peer_disconnected(id):
 	alert_player_leave(id)
@@ -259,10 +259,7 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 		PACKET_TYPE_POSITIONAL:
 			update_position(packet)
 		PACKET_TYPE_PING:
-			if packet.decode_u8(1) == 1:
-				debuge("Ping Successful")
-			else:
-				client.server_exists()
+			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				start_game(packet.decode_u8(2))
@@ -278,8 +275,7 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_POSITIONAL:
 			echo_positional(id, packet)
 		PACKET_TYPE_PING:
-			if packet.decode_u8(1) == 1:
-				ping_response(id)
+			ping_response(id)
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				multiplayer.multiplayer_peer.refuse_new_connections = true
