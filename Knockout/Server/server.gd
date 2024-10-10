@@ -79,7 +79,7 @@ func _ready():
 
 
 func return_to_menu(code: int):
-	print("[0]\t\t\tServer disconnected")
+	print("[0]\t\t\t\tServer disconnected")
 	if code == 1:
 		pass
 	if multiplayer.is_server(): multiplayer.multiplayer_peer.close()
@@ -113,9 +113,9 @@ func apply_impulse(packet: PackedByteArray):
 	impulse.z = packet.decode_float(9)
 	client.apply_player_positional(impulse)
 
-func start_game(isPlaying: int):
+func start_game(isPlaying: int, oppid: int):
 	if isPlaying == 0:
-		client.start_game()
+		client.start_game(oppid)
 	else:
 		debuge("(insert spectation code here)")
 
@@ -208,7 +208,7 @@ func echo_positional(id: int, packet: PackedByteArray):
 
 func event_start_echo():
 	var packet = PackedByteArray()
-	packet.resize(3)
+	packet.resize(7)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
 	packet.encode_u8(1,EVENT_TYPE_GAME_START)
 	for peer in multiplayer.get_peers():
@@ -216,6 +216,7 @@ func event_start_echo():
 			packet.encode_u8(2,0)
 		else:
 			packet.encode_u8(2,1)
+		packet.encode_u32(3,pairings[peer])
 		multiplayer.send_bytes(packet,peer,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
 
 func event_start():
@@ -262,7 +263,7 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
 			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
-				start_game(packet.decode_u8(2))
+				start_game(packet.decode_u8(2),packet.decode_u32(3))
 			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_LEAVE:
 				handle_player_disconnect()
 		PACKET_TYPE_IMPULSE:

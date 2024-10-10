@@ -16,19 +16,29 @@ func _ready() -> void:
 	debug("Connected as " + multiplayer_type)
 	if multiplayer_type != "admin":
 		$Control.queue_free()
-	player = get_node("Player")
 
 func _physics_process(delta: float) -> void:
 	if game_started and has_opponent:
 		get_node("../Server").send_positional(player)
 
-func start_game():
+func start_game(oppid: int):
 	game_started = true
+	var opp_spawn = get_node("World/Opponentspawn").position
+	var player_spawn = get_node("World/Playerspawn").position
+	if oppid < multiplayer.get_unique_id():
+		var tmp = opp_spawn
+		opp_spawn = player_spawn
+		player_spawn = tmp
+	var play = load("res://Client/player.tscn").instantiate()
+	play.name = "Player"
+	play.look_at_from_position(player_spawn,opp_spawn)
+	add_child(play)
 	var opp = load("res://Client/player.tscn").instantiate()
 	opp.name = "Opponent"
 	opp.is_auth = false
-	opp.position = Vector3(0,-9999,0)
+	opp.look_at_from_position(opp_spawn,player_spawn)
 	add_child(opp)
+	player = get_node("Player")
 	opponent = get_node("Opponent")
 
 func update_opponent_positional(data: Array):
