@@ -9,7 +9,11 @@ const GRAVITY = 0.15
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
+	if name == "Opponent":
+		$Gun.queue_free()
+	else:
+		$Showgun.queue_free()
+		
 func _input(event):
 	if !is_auth: return
 	if event is InputEventMouseButton:
