@@ -6,6 +6,7 @@ var has_opponent = true
 var last = 0
 var ticks = 0
 var tte = 0.0
+var dmg_percent = 1.0
 var player: CharacterBody3D = null
 var opponent: CharacterBody3D = null
 
@@ -47,7 +48,8 @@ func update_opponent_positional(data: Array):
 	opponent.quaternion = data[2]
 
 func apply_player_positional(impulse: Vector3):
-	player.velocity += impulse
+	dmg_percent += 0.02
+	player.velocity += impulse*dmg_percent
 	player.just_hit = true
 
 func remove_opponent():
