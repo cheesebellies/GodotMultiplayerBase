@@ -9,17 +9,20 @@ const GRAVITY = 0.15
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	$Camera3D/RayCast3D.add_exception(self)
 	if name == "Opponent":
-		$Gun.queue_free()
+		$Camera3D/Gun.queue_free()
 	else:
 		$Showgun.queue_free()
-		
+
+
+
 func _input(event):
 	if !is_auth: return
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			if $Camera3D/RayCast3D.is_colliding():
-				get_parent().hit_opponent((get_node("../Opponent").position - self.position).normalized() + Vector3(0,1.5,0))
+	if event is InputEventMouseButton and event.pressed and event.button_index == 1:
+		var coll = $Camera3D/RayCast3D.get_collider()
+		if coll and coll.name == "Opponent":
+			get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized() + Vector3(0,0.65,0))
 	var ncams = 0.001
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * ncams)

@@ -24,14 +24,38 @@ shape = SubResource("CapsuleShape3D_nwhx5")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 
-[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.0623427)
-target_position = Vector3(0, -2, 0)
-collision_mask = 2
-
-[node name="Gun" type="MeshInstance3D" parent="."]
-transform = Transform3D(-0.0286214, 0, 0.147244, 0, 0.15, 0, -0.147244, 0, -0.0286214, 1.102, -0.36, 0.185)
+[node name="Gun" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(-0.0286214, 0, 0.147244, 0, 0.15, 0, -0.147244, 0, -0.0286214, 1.102, -1.0905, 0.185)
 mesh = ExtResource("2_n5cl6")
+skeleton = NodePath("../..")
+
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+target_position = Vector3(0, -999, 0)
+collision_mask = 3
+hit_back_faces = false
+debug_shape_thickness = 1
+
+[node name="Crosshair" type="Control" parent="Camera3D"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Camera3D/Crosshair"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Camera3D/Crosshair/CenterContainer"]
+custom_minimum_size = Vector2(2, 2)
+layout_mode = 2
+color = Color(0, 1, 0, 1)
 
 [node name="Showgun" type="MeshInstance3D" parent="."]
 transform = Transform3D(-0.00120524, 0, 0.0599879, 0, 0.06, 0, -0.0599879, 0, -0.00120524, 0.406698, 0.352911, -0.232804)
