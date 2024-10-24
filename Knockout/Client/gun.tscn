@@ -1,0 +1,116 @@
+[gd_scene load_steps=11 format=3 uid="uid://by2xerc4qs3hw"]
+
+[ext_resource type="ArrayMesh" uid="uid://s6dah1trujjb" path="res://Assets/gun_new.obj" id="1_ho6dx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qx8qf"]
+albedo_color = Color(0.502732, 0.525969, 0.391193, 1)
+
+[sub_resource type="Animation" id="Animation_s3kbi"]
+resource_name = "recoil"
+length = 0.1333
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Gun")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1.102, -1.0905, 0.185, 0.0333333, 1, 1.102, -1.09, 0.26, 0.133333, 1, 1.102, -1.09, 0.185)
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GPUParticles3D:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_qgssw"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Gun")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1.102, -1.0905, 0.185)
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GPUParticles3D:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sfmrh"]
+_data = {
+"RESET": SubResource("Animation_qgssw"),
+"recoil": SubResource("Animation_s3kbi")
+}
+
+[sub_resource type="Curve" id="Curve_ijow5"]
+_data = [Vector2(0, 0.841661), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_opawn"]
+curve = SubResource("Curve_ijow5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w7jor"]
+emission_shape = 1
+emission_sphere_radius = 0.2
+angle_min = 1.07288e-05
+angle_max = 202.5
+direction = Vector3(-0.4, -0.3, 0)
+spread = 32.927
+initial_velocity_min = 8.5
+initial_velocity_max = 12.5
+gravity = Vector3(0, 0, 0)
+scale_min = 0.35
+scale_max = 0.35
+scale_curve = SubResource("CurveTexture_opawn")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6opkv"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(0, 0, 0, 1)
+heightmap_scale = 1.381
+subsurf_scatter_strength = 0.73
+grow_amount = 0.381
+distance_fade_min_distance = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_wbecy"]
+material = SubResource("StandardMaterial3D_6opkv")
+radial_segments = 16
+rings = 16
+
+[node name="Gun" type="Node3D"]
+
+[node name="Gun" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.0286214, 0, 0.147244, 0, 0.15, 0, -0.147244, 0, -0.0286214, 1.102, -1.0905, 0.185)
+mesh = ExtResource("1_ho6dx")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_qx8qf")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_sfmrh")
+}
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.29, 0, 0, 0, 0.29, 0, 0, 0, 0.29, 0.63506, -0.82321, -1.26202)
+emitting = false
+amount = 24
+lifetime = 0.17
+one_shot = true
+collision_base_size = 0.0
+visibility_aabb = AABB(-2, -1.5, -1.25, 2.25, 3, 2.5)
+process_material = SubResource("ParticleProcessMaterial_w7jor")
+draw_pass_1 = SubResource("SphereMesh_wbecy")

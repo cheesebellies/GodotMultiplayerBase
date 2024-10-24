@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
-
+var ticks = 0
+var lastshot = -20
 const SPEED = 11.0
 const JUMP_VELOCITY = 4.5
 const GRAVITY = 0.15
@@ -15,21 +16,25 @@ func _ready() -> void:
 	else:
 		$Showgun.queue_free()
 
-
-
-func _input(event):
-	if !is_auth: return
-	if event is InputEventMouseButton and event.pressed and event.button_index == 1:
+func shoot():
+	if ticks-lastshot > 2:
+		lastshot = ticks
 		var coll = $Camera3D/RayCast3D.get_collider()
 		if coll and coll.name == "Opponent":
 			get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized() + Vector3(0,0.65,0))
-	var ncams = 0.001
+		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
+		anim.current_animation = "recoil"
+
+func _input(event):
+	if !is_auth: return
+	var ncams = 0.0008
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * ncams)
 		$Camera3D.rotate_x(-event.relative.y * ncams)
 		$Camera3D.rotation.x = clamp($Camera3D.rotation.x, -PI/2, PI/2)
 
 func _physics_process(delta):
+	ticks += 1
 	if is_auth:
 		if Input.is_action_just_pressed("ui_cancel"):
 			Input.mouse_mode = abs(Input.mouse_mode - 2)
@@ -55,5 +60,7 @@ func _physics_process(delta):
 			var modxyvel = xyvel.normalized()*SPEED
 			velocity.x = modxyvel.x
 			velocity.z = modxyvel.z
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			shoot()
 	move_and_slide()
 	just_hit = false

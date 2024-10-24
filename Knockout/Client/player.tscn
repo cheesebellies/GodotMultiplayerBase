@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bgqu04neoeayj"]
+[gd_scene load_steps=7 format=3 uid="uid://bgqu04neoeayj"]
 
 [ext_resource type="Script" path="res://Client/player.gd" id="1_61x8s"]
+[ext_resource type="PackedScene" uid="uid://by2xerc4qs3hw" path="res://Client/gun.tscn" id="2_i4j81"]
 [ext_resource type="ArrayMesh" uid="uid://s6dah1trujjb" path="res://Assets/gun_new.obj" id="2_n5cl6"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fhnbn"]
@@ -24,10 +25,7 @@ shape = SubResource("CapsuleShape3D_nwhx5")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 
-[node name="Gun" type="MeshInstance3D" parent="Camera3D"]
-transform = Transform3D(-0.0286214, 0, 0.147244, 0, 0.15, 0, -0.147244, 0, -0.0286214, 1.102, -1.0905, 0.185)
-mesh = ExtResource("2_n5cl6")
-skeleton = NodePath("../..")
+[node name="Gun" parent="Camera3D" instance=ExtResource("2_i4j81")]
 
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
@@ -53,7 +51,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="Camera3D/Crosshair/CenterContainer"]
-custom_minimum_size = Vector2(2, 2)
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 color = Color(0, 1, 0, 1)
 
