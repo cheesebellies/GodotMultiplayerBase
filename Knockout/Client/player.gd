@@ -1,7 +1,8 @@
 extends CharacterBody3D
 
 var ticks = 0
-var lastshot = -20
+var tte = 0.0
+var lastshot = -2.0
 const SPEED = 11.0
 const JUMP_VELOCITY = 4.5
 const GRAVITY = 0.15
@@ -17,11 +18,15 @@ func _ready() -> void:
 		$Showgun.queue_free()
 
 func shoot():
-	if ticks-lastshot > 2:
-		lastshot = ticks
+	if tte-lastshot >= 0.1333:
+		lastshot = tte
 		var coll = $Camera3D/RayCast3D.get_collider()
 		if coll and coll.name == "Opponent":
 			get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized() + Vector3(0,0.65,0))
+			$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
+			$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
+			$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
+			$Camera3D/Crosshair/CenterContainer/Sprite2D/Timer.start()
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
 		anim.current_animation = "recoil"
 
@@ -34,7 +39,6 @@ func _input(event):
 		$Camera3D.rotation.x = clamp($Camera3D.rotation.x, -PI/2, PI/2)
 
 func _physics_process(delta):
-	ticks += 1
 	if is_auth:
 		if Input.is_action_just_pressed("ui_cancel"):
 			Input.mouse_mode = abs(Input.mouse_mode - 2)
@@ -64,3 +68,9 @@ func _physics_process(delta):
 			shoot()
 	move_and_slide()
 	just_hit = false
+	ticks += 1
+	tte += delta
+
+
+func _on_hitmarker_timeout() -> void:
+	$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = false
