@@ -66,7 +66,7 @@ func remove_opponent():
 	msg.queue_free()
 
 func hit_opponent(normal: Vector3):
-	get_node("../Server").send_hit(normal*2.0)
+	get_node("../Server").send_hit(normal*2.0 + Vector3(0,0.65,0))
 
 func _on_start_pressed():
 	get_node("../Server").event_start()

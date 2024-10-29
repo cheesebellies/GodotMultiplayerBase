@@ -22,7 +22,7 @@ func shoot():
 		lastshot = tte
 		var coll = $Camera3D/RayCast3D.get_collider()
 		if coll and coll.name == "Opponent":
-			get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized() + Vector3(0,0.65,0))
+			get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized())
 			$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
 			$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
 			$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
