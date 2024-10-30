@@ -49,10 +49,15 @@ func _physics_process(delta):
 		if just_hit && is_on_floor():
 			just_hit = false
 		if !is_on_floor():
-			velocity += direction * 0.35
-			var vel_mod = 0.995
-			velocity.x *= vel_mod
-			velocity.z *= vel_mod
+			if just_hit:
+				var nvel = velocity + direction * 0.35
+				if velocity.length() > SPEED:
+					if nvel.length() < velocity.length():
+						velocity = nvel
+			else:
+				velocity += direction * 0.35
+			velocity.x *= 0.995
+			velocity.z *= 0.995
 		elif direction:
 			velocity.x = direction.x * SPEED
 			velocity.z = direction.z * SPEED
@@ -61,7 +66,7 @@ func _physics_process(delta):
 			velocity.z *= 0.675
 		velocity.y -= GRAVITY
 		var xyvel = Vector3(velocity.x,0.0,velocity.z)
-		if just_hit && (xyvel.length() > SPEED):
+		if !just_hit && (xyvel.length() > SPEED):
 			var modxyvel = xyvel.normalized()*SPEED
 			velocity.x = modxyvel.x
 			velocity.z = modxyvel.z

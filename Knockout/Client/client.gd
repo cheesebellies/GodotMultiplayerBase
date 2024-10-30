@@ -6,6 +6,7 @@ var has_opponent = true
 var last = 0
 var ticks = 0
 var tte = 0.0
+@export var op_gun = false
 var dmg_percent = 1.0
 var player: CharacterBody3D = null
 var opponent: CharacterBody3D = null
@@ -48,7 +49,7 @@ func update_opponent_positional(data: Array):
 	opponent.quaternion = data[2]
 
 func apply_player_positional(impulse: Vector3):
-	dmg_percent += 0.02
+	dmg_percent += 0.05
 	player.velocity += impulse*dmg_percent
 	player.just_hit = true
 
@@ -66,7 +67,10 @@ func remove_opponent():
 	msg.queue_free()
 
 func hit_opponent(normal: Vector3):
-	get_node("../Server").send_hit(normal*2.0 + Vector3(0,0.65,0))
+	if !op_gun:
+		get_node("../Server").send_hit(normal*2.0 + Vector3(0,0.65,0))
+	else:
+		get_node("../Server").send_hit(normal*20.0 + Vector3(0,0.65,0))
 
 func _on_start_pressed():
 	get_node("../Server").event_start()
