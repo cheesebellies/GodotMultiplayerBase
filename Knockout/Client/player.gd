@@ -44,9 +44,10 @@ func _physics_process(delta):
 			Input.mouse_mode = abs(Input.mouse_mode - 2)
 		if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 			velocity.y = JUMP_VELOCITY
-			just_hit = true
 		var input_dir = Input.get_vector("a", "d", "w", "s")
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		if just_hit && is_on_floor():
+			just_hit = false
 		if !is_on_floor():
 			velocity += direction * 0.35
 			var vel_mod = 0.995
@@ -60,14 +61,13 @@ func _physics_process(delta):
 			velocity.z *= 0.675
 		velocity.y -= GRAVITY
 		var xyvel = Vector3(velocity.x,0.0,velocity.z)
-		if xyvel.length() > SPEED:
+		if just_hit && (xyvel.length() > SPEED):
 			var modxyvel = xyvel.normalized()*SPEED
 			velocity.x = modxyvel.x
 			velocity.z = modxyvel.z
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			shoot()
 	move_and_slide()
-	just_hit = false
 	ticks += 1
 	tte += delta
 
