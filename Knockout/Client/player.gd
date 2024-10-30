@@ -51,7 +51,8 @@ func _physics_process(delta):
 		if !is_on_floor():
 			if just_hit:
 				var nvel = velocity + direction * 0.35
-				if velocity.length() > SPEED:
+				var nxyvel = Vector3(velocity.x,0.0,velocity.z)
+				if nxyvel.length() > SPEED:
 					if nvel.length() < velocity.length():
 						velocity = nvel
 			else:
