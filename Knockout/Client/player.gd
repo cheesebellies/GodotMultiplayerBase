@@ -10,17 +10,16 @@ const GRAVITY = 0.15
 @export var just_hit: bool = false
 @export var is_auth: bool = true
 
-#*********************************************************
-# To-do:
+#****************************************************
+#						To-do:
 #3	- Make shooting a projectile system
 #5	- Add a slight aim assist option
-#2	- Basic menu
 #4	- Implement pickup system (powerups/guns)
 #6	- Implement powerup selection
-#1	- Implement basic rematch/death system
 #
 #
-#*********************************************************
+#
+#****************************************************
 
 @export var powerups: Dictionary = {
 	"repel": false,		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
