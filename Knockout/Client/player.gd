@@ -12,8 +12,8 @@ const GRAVITY = 0.15
 #*********************************************************
 # To-do:
 #	- Make shooting a projectile system
-#	- 
-#
+#	- Add a slight aim assist option
+#	- Basic menu
 #*********************************************************
 
 @export var powerups: Dictionary = {
@@ -25,6 +25,13 @@ const GRAVITY = 0.15
 	"tank": false		# Long (15 seconds) that reduces knockback, but also increases size
 	"shrink": false		# Long (15 seconds) that reduces player size, but also increases knockback
 	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
+}
+@export var weapons: Dictionary = {
+	"revolver": true	# 6-shot revolver, the "default". Semi auto, size 6 magazine, short reload, small static KB, long range/spread
+	"rifle": false		# Bolt-action rifle, the "sniper". Semi auto, size 1 magazine, short reload, large static KB, long range/spread
+	"auto_rifle": false	# Automatic rifle, the "you're boring, boorish, bogus, and bovine if you use this gun". Auto, size 18 magazine, long reload, small static KB, medium range/spread
+	"shotgun": false	# Shotgun, the "shotgun". Semi auto, size 2 magazine, long reload, large static KB, short range/spread
+	"SMG": false		# SMG, the "SMG". Auto, size 35 magazine, long reload, small dynamic KB (more the longer you hold LMB), short range/spread
 }
 
 
