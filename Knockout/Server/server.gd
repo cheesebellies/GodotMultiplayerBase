@@ -11,7 +11,8 @@ extends Node
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH}
+enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
 
@@ -123,6 +124,10 @@ func handle_player_disconnect():
 	client.remove_opponent()
 	debuge("Opponent disconnected")
 
+func handle_player_death(wol: int):
+	client.reset_match()
+	debuge("Match won" if wol == EVENT_INFO_MATCH_WON else "Match lost")
+
 
 
 #Bit processing
@@ -179,6 +184,19 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 #Packet functions
 
 
+
+func player_death():
+	var packet = PackedByteArray()
+	packet.resize(3)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PLAYER_DEATH)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
+
+func player_death_echo(id: int, packet: PackedByteArray):
+	packet.encode_u8(2,EVENT_INFO_MATCH_LOST)
+	multiplayer.send_bytes(packet, id, MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
+	packet.encode_u8(2,EVENT_INFO_MATCH_WON)
+	multiplayer.send_bytes(packet, pairings[id], MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func alert_player_leave(id: int):
 	var packet = PackedByteArray()
@@ -266,6 +284,8 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 				start_game(packet.decode_u8(2),packet.decode_u32(3))
 			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_LEAVE:
 				handle_player_disconnect()
+			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_DEATH:
+				handle_player_death(packet.decode_u8(2))
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 
@@ -278,7 +298,10 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_PING:
 			ping_response(id)
 		PACKET_TYPE_EVENT:
-			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
+			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_DEATH:
+				# Matchmaking code here
+				player_death_echo(id, packet)
+			elif packet.decode_u8(1) == EVENT_TYPE_GAME_START:
 				multiplayer.multiplayer_peer.refuse_new_connections = true
 				make_pairings()
 				event_start_echo()
