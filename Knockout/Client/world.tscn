@@ -26,7 +26,7 @@ uv1_scale = Vector3(2, 8, 1)
 size = Vector3(16, 1, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_p4cco"]
-size = Vector3(200, 150, 200)
+size = Vector3(200, 20, 200)
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_2cqbr"]
 rayleigh_coefficient = 1.5
@@ -104,7 +104,27 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Killbox/Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36.2745, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, 0)
+shape = SubResource("BoxShape3D_p4cco")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Killbox/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
+shape = SubResource("BoxShape3D_p4cco")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Killbox/Area3D"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 90, 60, 0)
+shape = SubResource("BoxShape3D_p4cco")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="Killbox/Area3D"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -90, 60, 0)
+shape = SubResource("BoxShape3D_p4cco")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="Killbox/Area3D"]
+transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114e-08, 1, -4.37114e-08, 0, 60, -90)
+shape = SubResource("BoxShape3D_p4cco")
+
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="Killbox/Area3D"]
+transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114e-08, 1, -4.37114e-08, 0, 60, 90)
 shape = SubResource("BoxShape3D_p4cco")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]

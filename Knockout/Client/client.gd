@@ -49,7 +49,7 @@ func start_game(oppid: int):
 	add_child(opp)
 	player = get_node("Player")
 	opponent = get_node("Opponent")
-	get_node("World/Killbox/Area3D").connect("body_exited", _on_killbox_body_exited)
+	get_node("World/Killbox/Area3D").connect("body_entered", _on_killbox_body_entered)
 
 func update_opponent_positional(data: Array):
 	if resetting: return
@@ -94,8 +94,6 @@ func reset_match():
 		player_spawn = tmp
 	var play = load("res://Client/player.tscn").instantiate()
 	play.name = "Player"
-	puid += 1
-	play.puid = puid
 	play.look_at_from_position(player_spawn,opp_spawn)
 	add_child(play)
 	var opp = load("res://Client/player.tscn").instantiate()
@@ -114,7 +112,7 @@ func _on_start_pressed():
 	get_node("root/Scanner").clean_up()
 	get_node("root/Scanner").queue_free()
 
-func _on_killbox_body_exited(body: Node3D):
-	if !resetting and body and (body.puid == puid):
+func _on_killbox_body_entered(body: Node3D):
+	if body == player:
 		resetting = true
 		server.player_death()
