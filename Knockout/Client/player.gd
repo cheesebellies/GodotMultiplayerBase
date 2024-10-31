@@ -27,6 +27,7 @@ const GRAVITY = 0.15
 	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
 
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	$Camera3D/RayCast3D.add_exception(self)
