@@ -11,9 +11,14 @@ const GRAVITY = 0.15
 
 #*********************************************************
 # To-do:
-#	- Make shooting a projectile system
-#	- Add a slight aim assist option
-#	- Basic menu
+#3	- Make shooting a projectile system
+#5	- Add a slight aim assist option
+#2	- Basic menu
+#4	- Implement pickup system (powerups/guns)
+#3	- Implement powerup selection
+#1	- Implement basic rematch/death system
+#
+#
 #*********************************************************
 
 @export var powerups: Dictionary = {
