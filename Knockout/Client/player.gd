@@ -17,14 +17,14 @@ const GRAVITY = 0.15
 #*********************************************************
 
 @export var powerups: Dictionary = {
-	"homing": false		# Short (3 seconds) that gives all shots fired a minor homing ability
-	"mobility": false	# Medium (10 seconds) that improves all movement: speed, air maneuverability, jump, etc.
-	"tank": false		# Medium (10 seconds) that reduces knockback, but also increases size
-	"shrink": false		# Medium (10 seconds) that reduces player size, but also increases knockback
 	"repel": false		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
 	"grapple": false	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
+	"homing": false		# Short (3 seconds) that gives all shots fired a minor homing ability
+	"overclock": false	# Medium (9 seconds) that increases weapon fire rate
+	"mobility": false	# Long (15 seconds) that improves all movement: speed, air maneuverability, jump, etc.
+	"tank": false		# Long (15 seconds) that reduces knockback, but also increases size
+	"shrink": false		# Long (15 seconds) that reduces player size, but also increases knockback
 	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
-	""
 }
 
 func _ready() -> void:
