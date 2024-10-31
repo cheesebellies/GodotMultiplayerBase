@@ -78,7 +78,3 @@ func _on_start_pressed():
 	if !get_node_or_null("root/Scanner"): return
 	get_node("root/Scanner").clean_up()
 	get_node("root/Scanner").queue_free()
-
-
-#func _on_ping_pressed():
-	#get_node("../Server").ping_server()

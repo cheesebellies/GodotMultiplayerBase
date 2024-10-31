@@ -9,6 +9,24 @@ const GRAVITY = 0.15
 @export var just_hit: bool = false
 @export var is_auth: bool = true
 
+#*********************************************************
+# To-do:
+#	- Make shooting a projectile system
+#	- 
+#
+#*********************************************************
+
+@export var powerups: Dictionary = {
+	"homing": false		# Short (3 seconds) that gives all shots fired a minor homing ability
+	"mobility": false	# Medium (10 seconds) that improves all movement: speed, air maneuverability, jump, etc.
+	"tank": false		# Medium (10 seconds) that reduces knockback, but also increases size
+	"shrink": false		# Medium (10 seconds) that reduces player size, but also increases knockback
+	"repel": false		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
+	"grapple": false	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
+	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
+	""
+}
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	$Camera3D/RayCast3D.add_exception(self)
