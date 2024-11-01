@@ -7,6 +7,7 @@ var puid: int = -1
 const SPEED = 11.0
 const JUMP_VELOCITY = 4.5
 const GRAVITY = 0.15
+const preproj = preload("res://Client/projectile.tscn")
 @export var just_hit: bool = false
 @export var is_auth: bool = true
 
@@ -51,15 +52,22 @@ func _ready() -> void:
 func shoot():
 	if tte-lastshot >= 0.1333:
 		lastshot = tte
-		var coll = $Camera3D/RayCast3D.get_collider()
-		if coll and coll.name == "Opponent":
-			get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized())
-			$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
-			$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
-			$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
-			$Camera3D/Crosshair/CenterContainer/Sprite2D/Timer.start()
+		#var coll = $Camera3D/RayCast3D.get_collider()
+		#if coll and coll.name == "Opponent":
+			#get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized())
+			#$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
+			#$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
+			#$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
+			#$Camera3D/Crosshair/CenterContainer/Sprite2D/Timer.start()
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
 		anim.current_animation = "recoil"
+		var proj = preproj.instantiate()
+		var fface = $Camera3D.global_basis.z
+		proj.position = global_position - fface + Vector3(0,0.731,0)
+		proj.direction = -fface
+		proj.exclusions = [self]
+		get_node("../World").add_child(proj)
+		proj.connect("hit",_projectile_hit)
 
 func _input(event):
 	if !is_auth: return
@@ -108,6 +116,9 @@ func _physics_process(delta):
 	ticks += 1
 	tte += delta
 
+func _projectile_hit(normal: Vector3, target: Node3D):
+	if target.name == "Opponent":
+		get_parent().hit_opponent(normal)
 
 func _on_hitmarker_timeout() -> void:
 	$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = false
