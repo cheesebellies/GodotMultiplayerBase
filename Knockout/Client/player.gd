@@ -13,8 +13,7 @@ const preproj = preload("res://Client/projectile.tscn")
 
 #****************************************************
 #						To-do:
-#3	- Make shooting a projectile system
-#5	- Add a slight aim assist option
+#3	- Add a slight aim assist option
 #4	- Implement pickup system (powerups/guns)
 #6	- Implement powerup selection
 #
@@ -41,6 +40,31 @@ const preproj = preload("res://Client/projectile.tscn")
 }
 
 
+
+# GAMEPLAY FUNCS
+
+
+
+func shoot():
+	if tte-lastshot >= 0.1333:
+		lastshot = tte
+		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
+		anim.current_animation = "recoil"
+		var fface = $Camera3D.global_basis.z
+		var proj = preproj.instantiate()
+		proj.position = global_position - fface + Vector3(0,0.731,0)
+		proj.speed = 1000
+		proj.direction = -fface
+		proj.exclusions = [self]
+		proj.connect("hit",_projectile_hit)
+		get_node("../World").add_child(proj)
+
+
+
+#BUILTINS
+
+
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	$Camera3D/RayCast3D.add_exception(self)
@@ -48,26 +72,6 @@ func _ready() -> void:
 		$Camera3D/Gun.queue_free()
 	else:
 		$Showgun.queue_free()
-
-func shoot():
-	if tte-lastshot >= 0.1333:
-		lastshot = tte
-		#var coll = $Camera3D/RayCast3D.get_collider()
-		#if coll and coll.name == "Opponent":
-			#get_parent().hit_opponent(($Camera3D/RayCast3D.get_collision_point() - $Camera3D.global_position).normalized())
-			#$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
-			#$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
-			#$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
-			#$Camera3D/Crosshair/CenterContainer/Sprite2D/Timer.start()
-		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
-		anim.current_animation = "recoil"
-		var proj = preproj.instantiate()
-		var fface = $Camera3D.global_basis.z
-		proj.position = global_position - fface + Vector3(0,0.731,0)
-		proj.direction = -fface
-		proj.exclusions = [self]
-		get_node("../World").add_child(proj)
-		proj.connect("hit",_projectile_hit)
 
 func _input(event):
 	if !is_auth: return
@@ -116,9 +120,19 @@ func _physics_process(delta):
 	ticks += 1
 	tte += delta
 
+
+
+# SIGNALS
+
+
+
 func _projectile_hit(normal: Vector3, target: Node3D):
 	if target.name == "Opponent":
 		get_parent().hit_opponent(normal)
+		$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
+		$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
+		$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
+		$Camera3D/Crosshair/CenterContainer/Sprite2D/Timer.start()
 
 func _on_hitmarker_timeout() -> void:
 	$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = false

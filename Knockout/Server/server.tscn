@@ -3,4 +3,5 @@
 [ext_resource type="Script" path="res://Server/server.gd" id="1_visfc"]
 
 [node name="Server" type="Node"]
+process_priority = -1
 script = ExtResource("1_visfc")

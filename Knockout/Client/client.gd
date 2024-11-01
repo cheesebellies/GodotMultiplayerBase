@@ -15,6 +15,7 @@ var server: Node = null
 var resetting = false
 var puid: int = 0
 
+
 func debug(tprint):
 	print("[Client] \t\t" + str(tprint))
 
@@ -60,7 +61,7 @@ func update_opponent_positional(data: Array):
 func apply_player_positional(impulse: Vector3):
 	if resetting: return
 	dmg_percent += 0.05
-	player.velocity += impulse*dmg_percent
+	player.velocity += impulse*dmg_percent + Vector3(0,1,0)
 	player.just_hit = true
 
 func remove_opponent():
@@ -79,9 +80,9 @@ func remove_opponent():
 
 func hit_opponent(normal: Vector3):
 	if !op_gun:
-		server.send_hit(normal*2.0 + Vector3(0,0.65,0))
+		server.send_hit(normal*2.0)
 	else:
-		server.send_hit((normal*2.0 + Vector3(0,0.65,0))*20.0)
+		server.send_hit(normal*20.0)
 
 func reset_match():
 	get_node("Opponent").free()
