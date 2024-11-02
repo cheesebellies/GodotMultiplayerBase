@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://ddiwsa3s5efjd"]
+[gd_scene load_steps=18 format=3 uid="uid://ddiwsa3s5efjd"]
 
 [ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="1_hvwqw"]
 [ext_resource type="Texture2D" uid="uid://c1mgq5q8aqoit" path="res://Assets/PrototypeTextures/prototype_512x512_yellow.png" id="2_q5idp"]
@@ -6,24 +6,39 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hq45l"]
 albedo_texture = ExtResource("1_hvwqw")
-uv1_scale = Vector3(25, 25, 25)
+uv1_scale = Vector3(25, -25, 25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n28fk"]
 size = Vector3(50, 1, 50)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gluuu"]
 albedo_texture = ExtResource("2_q5idp")
-uv1_scale = Vector3(4, 4, 4)
+uv1_scale = Vector3(4, -4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cmnh7"]
 size = Vector3(8, 8, 8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y2g3n"]
 albedo_texture = ExtResource("3_nqt5i")
-uv1_scale = Vector3(2, 8, 1)
+uv1_scale = Vector3(2, -8, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_72ql2"]
 size = Vector3(16, 1, 4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f8tlk"]
+albedo_texture = ExtResource("2_q5idp")
+uv1_scale = Vector3(2, -8, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rebnm"]
+size = Vector3(20, 1, 4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j064e"]
+albedo_texture = ExtResource("2_q5idp")
+uv1_scale = Vector3(2, -8, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_twqep"]
+albedo_texture = ExtResource("2_q5idp")
+uv1_scale = Vector3(2, -10, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_p4cco"]
 size = Vector3(200, 20, 200)
@@ -95,6 +110,53 @@ material = SubResource("StandardMaterial3D_y2g3n")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D4"]
 transform = Transform3D(1, 0, -3.55271e-15, 0, 1, -3.55271e-15, 1.63425e-13, 1.63425e-13, 1, 0, 0, 0)
 shape = SubResource("BoxShape3D_72ql2")
+
+[node name="StaticBody3D5" type="StaticBody3D" parent="Parts"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Parts/StaticBody3D5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+size = Vector3(16, 1, 4)
+material = SubResource("StandardMaterial3D_f8tlk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+shape = SubResource("BoxShape3D_rebnm")
+
+[node name="StaticBody3D6" type="StaticBody3D" parent="Parts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Parts/StaticBody3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+size = Vector3(16, 1, 4)
+material = SubResource("StandardMaterial3D_f8tlk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+shape = SubResource("BoxShape3D_rebnm")
+
+[node name="StaticBody3D7" type="StaticBody3D" parent="Parts"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 6)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Parts/StaticBody3D7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+size = Vector3(16, 1, 4)
+material = SubResource("StandardMaterial3D_j064e")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+shape = SubResource("BoxShape3D_rebnm")
+
+[node name="StaticBody3D8" type="StaticBody3D" parent="Parts"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -9.98438)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Parts/StaticBody3D8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.97534, 8, 19)
+size = Vector3(20, 1, 4)
+material = SubResource("StandardMaterial3D_twqep")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+shape = SubResource("BoxShape3D_rebnm")
 
 [node name="Killbox" type="Node3D" parent="."]
 
