@@ -19,5 +19,13 @@ func _physics_process(delta):
 	tte += delta
 	var res = move_and_collide(velocity*delta)
 	if res:
-		emit_signal("hit",velocity.normalized(),res.get_collider())
-		self.queue_free()
+		if (res.get_collider().name == "Opponent"):
+			emit_signal("hit",velocity.normalized(),res.get_collider())
+			self.queue_free()
+		else:
+			var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
+			var hitpos = res.get_position()
+			spark.look_at_from_position(hitpos,hitpos + res.get_normal())
+			get_parent().add_child(spark)
+			spark.get_node("GPUParticles3D").emitting = true
+			self.queue_free()

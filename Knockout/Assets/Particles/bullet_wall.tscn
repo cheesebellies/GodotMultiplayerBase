@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://3w31m2oc373m"]
+
+[ext_resource type="Script" path="res://Assets/Particles/bullet_wall.gd" id="1_4q5xy"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ma1cj"]
+lifetime_randomness = 0.4
+particle_flag_align_y = true
+angle_min = 1.07288e-05
+angle_max = 359.0
+velocity_pivot = Vector3(1, 1, 1)
+direction = Vector3(0, 1, 0)
+spread = 13.554
+initial_velocity_min = 5.0
+initial_velocity_max = 20.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6p7gv"]
+albedo_color = Color(1, 0.0823529, 0, 1)
+emission_enabled = true
+emission = Color(1, 0.698039, 0, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_1bvc0"]
+material = SubResource("StandardMaterial3D_6p7gv")
+radius = 0.025
+height = 0.05
+radial_segments = 4
+rings = 1
+is_hemisphere = true
+
+[node name="BulletWall" type="Node3D"]
+script = ExtResource("1_4q5xy")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+emitting = false
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_ma1cj")
+draw_pass_1 = SubResource("SphereMesh_1bvc0")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
