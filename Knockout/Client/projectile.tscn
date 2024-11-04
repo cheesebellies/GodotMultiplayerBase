@@ -12,3 +12,5 @@ script = ExtResource("1_lxuug")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_swyhn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
