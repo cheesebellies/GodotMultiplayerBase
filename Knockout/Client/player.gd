@@ -24,19 +24,20 @@ const preproj = preload("res://Client/projectile.tscn")
 @export var powerups: Dictionary = {
 	"repel": false,		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
 	"grapple": false,	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
-	"homing": false,		# Short (3 seconds) that gives all shots fired a minor homing ability
+	"homing": false,	# Short (3 seconds) that gives all shots fired a minor homing ability
 	"overclock": false,	# Medium (9 seconds) that increases weapon fire rate
 	"mobility": false,	# Long (15 seconds) that improves all movement: speed, air maneuverability, jump, etc.
 	"tank": false,		# Long (15 seconds) that reduces knockback, but also increases size
-	"shrink": false,		# Long (15 seconds) that reduces player size, but also increases knockback
+	"shrink": false,	# Long (15 seconds) that reduces player size, but also increases knockback
 	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
 @export var weapons: Dictionary = {
-	"revolver": true	,	# 6-shot revolver, the "default". Semi auto, size 6 magazine, short reload, small static KB, long range/spread
+	"revolver": true,	# 6-shot revolver, the "default". Semi auto, size 6 magazine, short reload, small static KB, long range/spread
 	"rifle": false,		# Bolt-action rifle, the "sniper". Semi auto, size 1 magazine, short reload, large static KB, long range/spread
-	"auto_rifle": false,	# Automatic rifle, the "you're boring, boorish, bogus, and bovine if you use this gun". Auto, size 18 magazine, long reload, small static KB, medium range/spread
+	"auto_rifle": false,# Automatic rifle, the "you're boring, boorish, bogus, and bovine if you use this gun". Auto, size 18 magazine, long reload, small static KB, medium range/spread
 	"shotgun": false,	# Shotgun, the "shotgun". Semi auto, size 2 magazine, long reload, large static KB, short range/spread
-	"SMG": false	,		# SMG, the "SMG". Auto, size 35 magazine, long reload, small dynamic KB (more the longer you hold LMB), short range/spread
+	"SMG": false	,	# SMG, the "SMG". Auto, size 35 magazine, long reload, small dynamic KB (more the longer you hold LMB), short range/spread
+	"launcher": false	# Grenade launcher, the "explosive". Semi auto, size 3 magazine, long reload (reload shells one at a time, can use after each), large dynamic KB (based on explo distance), medium range / dropoff
 }
 
 
