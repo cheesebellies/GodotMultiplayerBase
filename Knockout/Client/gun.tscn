@@ -6,14 +6,13 @@
 albedo_color = Color(0.502732, 0.525969, 0.391193, 1)
 
 [sub_resource type="Animation" id="Animation_qgssw"]
-length = 0.001
 tracks/0/type = "position_3d"
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/path = NodePath("Gun")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, 1.102, -1.0905, 0.185)
+tracks/0/keys = PackedFloat32Array(1, 1, 1.102, -1.0905, 0.185)
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true

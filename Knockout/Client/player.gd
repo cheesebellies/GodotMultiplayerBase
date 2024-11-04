@@ -21,7 +21,19 @@ const preproj = preload("res://Client/projectile.tscn")
 #
 #****************************************************
 
-@export var powerups: Dictionary = {
+enum {WEAPON_REVOLVER,WEAPON_RIFLE,WEAPON_AUTO_RIFLE,WEAPON_SHOTGUN,WEAPON_SMG,WEAPON_LAUNCHER}
+enum {POWERUP_REPEL,POWERUP_GRAPPLE,POWERUP_HOMING,POWERUP_OVERCLOCK,POWERUP_MOBILITY,POWERUP_TANK,POWERUP_SHRINK,POWERUP_SAVIOR}
+
+var weapons: Dictionary = {
+	WEAPON_REVOLVER: Weapon.new(WEAPON_REVOLVER,"Simple revolver, the starting weapon.", false, 6, 0.1, 0.5, 30, load("res://Assets/gun_new.obj")),
+	WEAPON_RIFLE: Weapon.new(WEAPON_RIFLE,"Simple revolver, the starting weapon.", false, 1, 0.2, 0.5, 30, load("res://Assets/gun_new.obj")),
+	WEAPON_AUTO_RIFLE: Weapon.new(WEAPON_AUTO_RIFLE,"Simple revolver, the starting weapon.", true, 18, 0.2, 0.5, 30, load("res://Assets/gun_new.obj")),
+	WEAPON_SHOTGUN: Weapon.new(WEAPON_SHOTGUN,"Simple revolver, the starting weapon.", false, 2, 0.2, 0.5, 30, load("res://Assets/gun_new.obj")),
+	WEAPON_SMG: Weapon.new(WEAPON_SMG,"Simple revolver, the starting weapon.", true, 35, 0.05, 0.5, 30, load("res://Assets/gun_new.obj")),
+	WEAPON_LAUNCHER: Weapon.new(WEAPON_LAUNCHER,"Simple revolver, the starting weapon.", false, 3, 0.2, 0.5, 30, load("res://Assets/gun_new.obj"))
+}
+
+@export var has_powerup: Dictionary = {
 	"repel": false,		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
 	"grapple": false,	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
 	"homing": false,	# Short (3 seconds) that gives all shots fired a minor homing ability
@@ -31,15 +43,28 @@ const preproj = preload("res://Client/projectile.tscn")
 	"shrink": false,	# Long (15 seconds) that reduces player size, but also increases knockback
 	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
-@export var weapons: Dictionary = {
-	"revolver": true,	# 6-shot revolver, the "default". Semi auto, size 6 magazine, short reload, small static KB, long range/spread
-	"rifle": false,		# Bolt-action rifle, the "sniper". Semi auto, size 1 magazine, short reload, large static KB, long range/spread
-	"auto_rifle": false,# Automatic rifle, the "you're boring, boorish, bogus, and bovine if you use this gun". Auto, size 18 magazine, long reload, small static KB, medium range/spread
-	"shotgun": false,	# Shotgun, the "shotgun". Semi auto, size 2 magazine, long reload, large static KB, short range/spread
-	"SMG": false	,	# SMG, the "SMG". Auto, size 35 magazine, long reload, small dynamic KB (more the longer you hold LMB), short range/spread
-	"launcher": false	# Grenade launcher, the "explosive". Semi auto, size 3 magazine, long reload (reload shells one at a time, can use after each), large dynamic KB (based on explo distance), medium range / dropoff
-}
+var current_weapon: Weapon = weapons.WEAPON_REVOLVER
 
+
+class Weapon:
+	var type: int
+	var description: String
+	var is_auto: bool
+	var mag_size: int
+	var reload_time: float
+	var KB_mult: float
+	var range: float
+	var model: Mesh
+	
+	func _init(type: int, description: String, is_auto: bool, mag_size: int, reload_time: float, KB_mult: float, range: float, model: Mesh):
+		self.type = type
+		self.description = description
+		self.is_auto = is_auto
+		self.mag_size = mag_size
+		self.reload_time = reload_time
+		self.KB_mult = KB_mult
+		self.range = range
+		self.model = model
 
 
 # GAMEPLAY FUNCS
@@ -58,6 +83,7 @@ func shoot():
 		proj.direction = -fface
 		proj.exclusions = [self]
 		proj.connect("hit",_projectile_hit)
+		proj.connect("miss",_projectile_miss)
 		get_node("../World").add_child(proj)
 
 
@@ -125,7 +151,16 @@ func _physics_process(delta):
 
 # SIGNALS
 
-
+func _projectile_miss(pos: Vector3, normal: Vector3, vel: Vector3, target: Node):
+	pass
+	#this shit is cursed
+	#var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
+	##var lookat = vel.normalized().bounce(normal)
+	#var lookat = normal
+	#get_node("../World").add_child(spark)
+	#spark.position = pos
+	#spark.look_at(pos+lookat)
+	#spark.get_node("GPUParticles3D").emitting = true
 
 func _projectile_hit(normal: Vector3, target: Node3D):
 	if target.name == "Opponent":

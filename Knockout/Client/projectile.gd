@@ -9,7 +9,7 @@ extends CharacterBody3D
 var tte = 0.0
 
 signal hit(normal: Vector3, target: Node)
-signal miss(position: Vector3, normal: Vector3, target: Node)
+signal miss(position: Vector3, normal: Vector3, velocity: Vector3, target: Node)
 
 func _ready():
 	velocity = direction*speed
@@ -27,7 +27,8 @@ func _physics_process(delta):
 			emit_signal("hit",velocity.normalized(),res.get_collider())
 			self.queue_free()
 		else:
-			emit_signal("miss",res.get_position(),res.get_normal(),res.get_collider())
+			emit_signal("miss",res.get_position(),res.get_normal(),velocity,res.get_collider())
+			self.queue_free()
 			# var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
 			# var hitpos = res.get_position()
 			# spark.look_at_from_position(hitpos,hitpos + res.get_normal())

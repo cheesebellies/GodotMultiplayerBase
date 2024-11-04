@@ -87,6 +87,7 @@ func hit_opponent(normal: Vector3):
 func reset_match():
 	get_node("Opponent").free()
 	get_node("Player").free()
+	dmg_percent = 1.0
 	var opp_spawn = get_node("World/Opponentspawn").position
 	var player_spawn = get_node("World/Playerspawn").position
 	if opponent_id < multiplayer.get_unique_id():
