@@ -1,8 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://ddiwsa3s5efjd"]
+[gd_scene load_steps=19 format=3 uid="uid://ddiwsa3s5efjd"]
 
 [ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="1_hvwqw"]
 [ext_resource type="Texture2D" uid="uid://c1mgq5q8aqoit" path="res://Assets/PrototypeTextures/prototype_512x512_yellow.png" id="2_q5idp"]
 [ext_resource type="Texture2D" uid="uid://dk2rcron3msrf" path="res://Assets/PrototypeTextures/prototype_512x512_blue1.png" id="3_nqt5i"]
+[ext_resource type="PackedScene" uid="uid://dcejnb2q23ht7" path="res://Client/pickup.tscn" id="4_nr3f7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hq45l"]
 albedo_texture = ExtResource("1_hvwqw")
@@ -202,3 +203,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 9.5, 19)
 
 [node name="Opponentspawn" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 9.5, -19)
+
+[node name="Pickup" parent="." instance=ExtResource("4_nr3f7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38268, 0)

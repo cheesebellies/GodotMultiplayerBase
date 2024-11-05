@@ -121,7 +121,7 @@ rings = 16
 [node name="Gun" type="Node3D"]
 
 [node name="Gun" type="MeshInstance3D" parent="."]
-transform = Transform3D(-0.0138296, 0, 0.149361, 0, 0.15, 0, -0.149361, 0, -0.0138296, 1.102, -1.0905, 0.185)
+transform = Transform3D(-0.0138289, 0, 0.149361, 0, 0.15, 0, -0.149361, 0, -0.0138289, 1.102, -1.0905, 0.185)
 mesh = ExtResource("1_ho6dx")
 skeleton = NodePath("../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_qx8qf")
