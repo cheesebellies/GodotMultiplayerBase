@@ -114,11 +114,11 @@ func shoot():
 	if current_weapon.mag_count <= 0:
 		reload()
 		return
-	if tte > (current_weapon.last_shot + current_weapon.fire_rate):
+	if (current_weapon.last_shot + current_weapon.fire_rate) < tte:
 		current_weapon.last_shot = tte
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
-		anim.speed_scale = current_weapon.fire_rate
 		anim.current_animation = "recoil"
+		anim.speed_scale = 1
 		var fface = $Camera3D.global_basis.z
 		var proj = preproj.instantiate()
 		proj.position = global_position - fface + Vector3(0,0.731,0)
@@ -136,6 +136,8 @@ func reload():
 	current_weapon.reload_start = tte
 	$Camera3D/Gun/ReloadTimer.wait_time = current_weapon.reload_time
 	$Camera3D/Gun/ReloadTimer.start()
+	$Camera3D/Gun/AnimationPlayer.current_animation = "reload"
+	$Camera3D/Gun/AnimationPlayer.speed_scale = 1/current_weapon.reload_time
 
 
 #BUILTINS
@@ -200,6 +202,7 @@ func _physics_process(delta):
 				shoot()
 		if Input.is_action_just_pressed("r"):
 			reload()
+	$Camera3D/HUD/Label.text = str(current_weapon.mag_count) + " Ammo"
 	move_and_slide()
 	ticks += 1
 	tte += delta
@@ -222,13 +225,13 @@ func _projectile_miss(pos: Vector3, normal: Vector3, vel: Vector3, target: Node)
 func _projectile_hit(normal: Vector3, target: Node3D):
 	if target.name == "Opponent":
 		get_parent().hit_opponent(normal,current_weapon)
-		$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
-		$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
-		$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
-		$Camera3D/Crosshair/CenterContainer/Sprite2D/Timer.start()
+		$Camera3D/HUD/CenterContainer/Sprite2D.position = get_viewport().size/2
+		$Camera3D/HUD/CenterContainer/Sprite2D.visible = true
+		$Camera3D/HUD/CenterContainer/Sprite2D.rotation = randi_range(0,90)
+		$Camera3D/HUD/CenterContainer/Sprite2D/Timer.start()
 
 func _on_hitmarker_timeout() -> void:
-	$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = false
+	$Camera3D/HUD/CenterContainer/Sprite2D.visible = false
 
 func _reload_complete():
 	current_weapon.mag_count = current_weapon.mag_size

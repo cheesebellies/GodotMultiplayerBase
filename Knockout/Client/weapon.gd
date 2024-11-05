@@ -22,6 +22,7 @@ func _init(type: int, description: String, is_auto: bool, mag_size: int, reload_
 	self.mag_size = mag_size
 	self.mag_count = mag_size
 	self.reload_time = reload_time
+	self.fire_rate = fire_rate
 	self.KB_mult = KB_mult
 	self.range = range
 	self.model = model
