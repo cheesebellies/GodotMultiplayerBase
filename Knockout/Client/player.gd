@@ -2,7 +2,6 @@ extends CharacterBody3D
 
 var ticks = 0
 var tte = 0.0
-var lastshot = -2.0
 var puid: int = -1
 const SPEED = 11.0
 const JUMP_VELOCITY = 4.5
@@ -24,13 +23,75 @@ const preproj = preload("res://Client/projectile.tscn")
 enum {WEAPON_REVOLVER,WEAPON_RIFLE,WEAPON_AUTO_RIFLE,WEAPON_SHOTGUN,WEAPON_SMG,WEAPON_LAUNCHER}
 enum {POWERUP_REPEL,POWERUP_GRAPPLE,POWERUP_HOMING,POWERUP_OVERCLOCK,POWERUP_MOBILITY,POWERUP_TANK,POWERUP_SHRINK,POWERUP_SAVIOR}
 
+#type: int, description: String, is_auto: bool, mag_size: int, reload_time: float, fire_rate: float, KB_mult: float, range: float, model: Mesh
+
 var weapons: Dictionary = {
-	WEAPON_REVOLVER: Weapon.new(WEAPON_REVOLVER,"Simple revolver, the starting weapon.", false, 6, 0.1, 0.5, 30, load("res://Assets/gun_new.obj")),
-	WEAPON_RIFLE: Weapon.new(WEAPON_RIFLE,"Simple revolver, the starting weapon.", false, 1, 0.2, 0.5, 30, load("res://Assets/gun_new.obj")),
-	WEAPON_AUTO_RIFLE: Weapon.new(WEAPON_AUTO_RIFLE,"Simple revolver, the starting weapon.", true, 18, 0.2, 0.5, 30, load("res://Assets/gun_new.obj")),
-	WEAPON_SHOTGUN: Weapon.new(WEAPON_SHOTGUN,"Simple revolver, the starting weapon.", false, 2, 0.2, 0.5, 30, load("res://Assets/gun_new.obj")),
-	WEAPON_SMG: Weapon.new(WEAPON_SMG,"Simple revolver, the starting weapon.", true, 35, 0.05, 0.5, 30, load("res://Assets/gun_new.obj")),
-	WEAPON_LAUNCHER: Weapon.new(WEAPON_LAUNCHER,"Simple revolver, the starting weapon.", false, 3, 0.2, 0.5, 30, load("res://Assets/gun_new.obj"))
+	WEAPON_REVOLVER: Weapon.new(
+		WEAPON_REVOLVER,
+		"e",
+		false,
+		6,				#mag_size
+		1.8,			#reload_time
+		0.6,			#fire_rate
+		1.0,			#KB_mult
+		1.0,			#range
+		load("res://Assets/gun_new.obj")
+	),
+	WEAPON_RIFLE: Weapon.new(
+		WEAPON_RIFLE,
+		"e",
+		false,
+		1,				#mag_size
+		1.0,			#reload_time
+		0.2,			#fire_rate
+		3.0,			#KB_mult
+		2.0,			#range
+		load("res://Assets/gun_new.obj")
+	),
+	WEAPON_AUTO_RIFLE: Weapon.new(
+		WEAPON_AUTO_RIFLE,
+		"e",
+		true,
+		18,				#mag_size
+		4.0,			#reload_time
+		0.2,			#fire_rate
+		0.35,			#KB_mult
+		1.0,			#range
+		load("res://Assets/gun_new.obj")
+	),
+	WEAPON_SHOTGUN: Weapon.new(
+		WEAPON_SHOTGUN,
+		"e",
+		false,
+		2,				#mag_size
+		2.0,			#reload_time
+		0.8,			#fire_rate
+		4.5,			#KB_mult
+		0.1,			#range
+		load("res://Assets/gun_new.obj")
+	),
+	WEAPON_SMG: Weapon.new(
+		WEAPON_SMG,
+		"e",
+		true,
+		36,				#mag_size
+		3.5,			#reload_time
+		0.1,			#fire_rate
+		0.2,			#KB_mult
+		0.8,			#range
+		load("res://Assets/gun_new.obj")
+	),
+	WEAPON_LAUNCHER: Weapon.new(
+		WEAPON_LAUNCHER,
+		"e",
+		false,
+		3,				#mag_size
+		1.0,			#reload_time
+		0.8,			#fire_rate
+		5.0,			#KB_mult
+		0.5,			#range
+		load("res://Assets/gun_new.obj")
+	)
 }
 
 @export var has_powerup: Dictionary = {
@@ -43,38 +104,20 @@ var weapons: Dictionary = {
 	"shrink": false,	# Long (15 seconds) that reduces player size, but also increases knockback
 	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
-var current_weapon: Weapon = weapons.WEAPON_REVOLVER
 
-
-class Weapon:
-	var type: int
-	var description: String
-	var is_auto: bool
-	var mag_size: int
-	var reload_time: float
-	var KB_mult: float
-	var range: float
-	var model: Mesh
-	
-	func _init(type: int, description: String, is_auto: bool, mag_size: int, reload_time: float, KB_mult: float, range: float, model: Mesh):
-		self.type = type
-		self.description = description
-		self.is_auto = is_auto
-		self.mag_size = mag_size
-		self.reload_time = reload_time
-		self.KB_mult = KB_mult
-		self.range = range
-		self.model = model
-
-
+var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
 # GAMEPLAY FUNCS
 
 
 
 func shoot():
-	if tte-lastshot >= 0.1333:
-		lastshot = tte
+	if current_weapon.mag_count <= 0:
+		reload()
+		return
+	if tte > (current_weapon.last_shot + current_weapon.fire_rate):
+		current_weapon.last_shot = tte
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
+		anim.speed_scale = current_weapon.fire_rate
 		anim.current_animation = "recoil"
 		var fface = $Camera3D.global_basis.z
 		var proj = preproj.instantiate()
@@ -85,7 +128,14 @@ func shoot():
 		proj.connect("hit",_projectile_hit)
 		proj.connect("miss",_projectile_miss)
 		get_node("../World").add_child(proj)
+		current_weapon.mag_count -= 1
 
+func reload():
+	if tte <= current_weapon.reload_start+current_weapon.reload_time: return
+	if current_weapon.mag_count >= current_weapon.mag_size: return
+	current_weapon.reload_start = tte
+	$Camera3D/Gun/ReloadTimer.wait_time = current_weapon.reload_time
+	$Camera3D/Gun/ReloadTimer.start()
 
 
 #BUILTINS
@@ -99,6 +149,7 @@ func _ready() -> void:
 		$Camera3D/Gun.queue_free()
 	else:
 		$Showgun.queue_free()
+	$Camera3D/Gun/ReloadTimer.connect("timeout",_reload_complete)
 
 func _input(event):
 	if !is_auth: return
@@ -141,8 +192,14 @@ func _physics_process(delta):
 			var modxyvel = xyvel.normalized()*SPEED
 			velocity.x = modxyvel.x
 			velocity.z = modxyvel.z
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			shoot()
+		if current_weapon.is_auto:
+			if Input.is_action_pressed("m1"):
+				shoot()
+		else:
+			if Input.is_action_just_pressed("m1"):
+				shoot()
+		if Input.is_action_just_pressed("r"):
+			reload()
 	move_and_slide()
 	ticks += 1
 	tte += delta
@@ -155,7 +212,7 @@ func _projectile_miss(pos: Vector3, normal: Vector3, vel: Vector3, target: Node)
 	pass
 	#this shit is cursed
 	#var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
-	##var lookat = vel.normalized().bounce(normal)
+	#var lookat = vel.normalized().bounce(normal)
 	#var lookat = normal
 	#get_node("../World").add_child(spark)
 	#spark.position = pos
@@ -164,7 +221,7 @@ func _projectile_miss(pos: Vector3, normal: Vector3, vel: Vector3, target: Node)
 
 func _projectile_hit(normal: Vector3, target: Node3D):
 	if target.name == "Opponent":
-		get_parent().hit_opponent(normal)
+		get_parent().hit_opponent(normal,current_weapon)
 		$Camera3D/Crosshair/CenterContainer/Sprite2D.position = get_viewport().size/2
 		$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = true
 		$Camera3D/Crosshair/CenterContainer/Sprite2D.rotation = randi_range(0,90)
@@ -172,3 +229,6 @@ func _projectile_hit(normal: Vector3, target: Node3D):
 
 func _on_hitmarker_timeout() -> void:
 	$Camera3D/Crosshair/CenterContainer/Sprite2D.visible = false
+
+func _reload_complete():
+	current_weapon.mag_count = current_weapon.mag_size

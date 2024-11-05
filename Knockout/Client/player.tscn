@@ -28,6 +28,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 
 [node name="Gun" parent="Camera3D" instance=ExtResource("2_i4j81")]
 
+[node name="ReloadTimer" type="Timer" parent="Camera3D/Gun"]
+one_shot = true
+
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 target_position = Vector3(0, -999, 0)

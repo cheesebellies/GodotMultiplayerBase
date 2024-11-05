@@ -78,11 +78,8 @@ func remove_opponent():
 	await get_tree().create_timer(5.0).timeout
 	msg.queue_free()
 
-func hit_opponent(normal: Vector3):
-	if !op_gun:
-		server.send_hit(normal*2.0)
-	else:
-		server.send_hit(normal*20.0)
+func hit_opponent(normal: Vector3, weapon: Weapon):
+	server.send_hit(normal*100.0*weapon.KB_mult)
 
 func reset_match():
 	get_node("Opponent").free()
