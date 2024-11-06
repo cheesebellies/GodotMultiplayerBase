@@ -106,6 +106,9 @@ var weapons: Dictionary = {
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
+
+
+
 # GAMEPLAY FUNCS
 
 

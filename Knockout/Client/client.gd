@@ -24,7 +24,6 @@ func _ready() -> void:
 	server = get_node("../Server")
 	if multiplayer_type != "admin":
 		$Control.queue_free()
-	spawn_pickup(0,2)
 
 func _physics_process(delta: float) -> void:
 	if game_started and has_opponent and !resetting:
@@ -52,6 +51,7 @@ func start_game(oppid: int):
 	player = get_node("Player")
 	opponent = get_node("Opponent")
 	get_node("World/Killbox/Area3D").connect("body_entered", _on_killbox_body_entered)
+	spawn_pickup(0,randi_range(0,5))
 
 func spawn_pickup(ptype: int, pvariation: int):
 	var pup = load("res://Client/pickup.tscn").instantiate()
