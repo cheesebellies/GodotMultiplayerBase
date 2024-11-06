@@ -1,10 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://co5ngh07xf4ri"]
+[gd_scene load_steps=4 format=3 uid="uid://co5ngh07xf4ri"]
 
 [ext_resource type="Script" path="res://Client/projectile.gd" id="1_lxuug"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_swyhn"]
 margin = 0.0
 radius = 0.05
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2bwsy"]
+transparency = 1
+albedo_color = Color(1, 0.466667, 0.105882, 1)
+emission_enabled = true
+emission = Color(1, 0.611765, 0.0392157, 1)
+emission_energy_multiplier = 5.11
 
 [node name="Projectile" type="CharacterBody3D"]
 collision_layer = 0
@@ -14,4 +21,9 @@ script = ExtResource("1_lxuug")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_swyhn")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Node3D" type="Node3D" parent="."]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D"]
+transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114e-08, 1, -4.37114e-08, 0, -0.474434, 1)
+radius = 0.043821
+material = SubResource("StandardMaterial3D_2bwsy")

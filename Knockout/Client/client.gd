@@ -114,6 +114,7 @@ func reset_match():
 	add_child(opp)
 	player = get_node("Player")
 	opponent = get_node("Opponent")
+	spawn_pickup(0,randi_range(0,5))
 	resetting = false
 
 func _on_start_pressed():

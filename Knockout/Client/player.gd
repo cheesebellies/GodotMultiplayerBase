@@ -31,9 +31,9 @@ var weapons: Dictionary = {
 		"e",
 		false,
 		6,				#mag_size
-		1.8,			#reload_time
-		0.6,			#fire_rate
-		1.0,			#KB_mult
+		1.0,			#reload_time
+		0.3,			#fire_rate
+		1.45,			#KB_mult
 		1.0,			#range
 		load("res://Assets/gun_new.obj")
 	),
@@ -42,9 +42,9 @@ var weapons: Dictionary = {
 		"e",
 		false,
 		1,				#mag_size
-		1.0,			#reload_time
+		0.8,			#reload_time
 		0.2,			#fire_rate
-		3.0,			#KB_mult
+		2.5,			#KB_mult
 		2.0,			#range
 		load("res://Assets/gun_new.obj")
 	),
@@ -53,9 +53,9 @@ var weapons: Dictionary = {
 		"e",
 		true,
 		18,				#mag_size
-		4.0,			#reload_time
+		2.0,			#reload_time
 		0.2,			#fire_rate
-		0.35,			#KB_mult
+		0.55,			#KB_mult
 		1.0,			#range
 		load("res://Assets/gun_new.obj")
 	),
@@ -76,8 +76,8 @@ var weapons: Dictionary = {
 		true,
 		36,				#mag_size
 		3.5,			#reload_time
-		0.1,			#fire_rate
-		0.2,			#KB_mult
+		0.075,			#fire_rate
+		0.25,			#KB_mult
 		0.8,			#range
 		load("res://Assets/gun_new.obj")
 	),
@@ -131,6 +131,7 @@ func shoot():
 		proj.connect("hit",_projectile_hit)
 		proj.connect("miss",_projectile_miss)
 		get_node("../World").add_child(proj)
+		proj.get_node("Node3D").global_rotation = $Camera3D.global_rotation
 		current_weapon.mag_count -= 1
 
 func reload():
