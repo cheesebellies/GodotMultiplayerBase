@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dcejnb2q23ht7"]
+[gd_scene load_steps=6 format=3 uid="uid://dcejnb2q23ht7"]
 
 [ext_resource type="Script" path="res://Client/pickup.gd" id="1_6i74e"]
 [ext_resource type="ArrayMesh" uid="uid://s6dah1trujjb" path="res://Assets/gun_new.obj" id="2_q0yr8"]
@@ -7,10 +7,13 @@
 transparency = 1
 albedo_color = Color(1, 0.52549, 0.266667, 0.388235)
 emission_enabled = true
-emission = Color(1, 0.501961, 0.027451, 1)
-emission_energy_multiplier = 7.07
+emission = Color(1, 0.498039, 0.027451, 1)
+emission_energy_multiplier = 1.68
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_een6u"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_kbgdm"]
+radius = 0.682284
 
 [node name="Pickup" type="Node3D"]
 script = ExtResource("1_6i74e")
@@ -28,3 +31,13 @@ surface_material_override/0 = SubResource("StandardMaterial3D_een6u")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 light_color = Color(1, 0.8, 0.0588235, 1)
+
+[node name="Hitbox" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+shape = SubResource("SphereShape3D_kbgdm")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]

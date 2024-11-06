@@ -144,6 +144,9 @@ func impulse(impulse: Vector3):
 	just_hit = true
 	move_and_slide()
 
+func change_gun(type: int):
+	current_weapon = weapons[type]
+
 
 
 #BUILTINS
