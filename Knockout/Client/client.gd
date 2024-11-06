@@ -60,9 +60,8 @@ func update_opponent_positional(data: Array):
 
 func apply_player_positional(impulse: Vector3):
 	if resetting: return
-	dmg_percent += 0.05
-	player.velocity += impulse*dmg_percent + Vector3(0,1,0)
-	player.just_hit = true
+	impulse.y = 0.0
+	player.impulse(impulse*dmg_percent + Vector3(0,1.5,0))
 
 func remove_opponent():
 	if resetting: return
@@ -79,7 +78,7 @@ func remove_opponent():
 	msg.queue_free()
 
 func hit_opponent(normal: Vector3, weapon: Weapon):
-	server.send_hit(normal*100.0*weapon.KB_mult)
+	server.send_hit(normal*17.5*weapon.KB_mult)
 
 func reset_match():
 	get_node("Opponent").free()

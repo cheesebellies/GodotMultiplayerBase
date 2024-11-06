@@ -139,6 +139,12 @@ func reload():
 	$Camera3D/Gun/AnimationPlayer.current_animation = "reload"
 	$Camera3D/Gun/AnimationPlayer.speed_scale = 1/current_weapon.reload_time
 
+func impulse(impulse: Vector3):
+	velocity += impulse
+	just_hit = true
+	move_and_slide()
+
+
 
 #BUILTINS
 
@@ -202,7 +208,7 @@ func _physics_process(delta):
 				shoot()
 		if Input.is_action_just_pressed("r"):
 			reload()
-	$Camera3D/HUD/Label.text = str(current_weapon.mag_count) + " Ammo"
+		$Camera3D/HUD/Label.text = str(current_weapon.mag_count) + " Ammo"
 	move_and_slide()
 	ticks += 1
 	tte += delta
