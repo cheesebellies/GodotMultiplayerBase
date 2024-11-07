@@ -1,8 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://ddiwsa3s5efjd"]
+[gd_scene load_steps=23 format=3 uid="uid://ddiwsa3s5efjd"]
 
 [ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="1_hvwqw"]
+[ext_resource type="Script" path="res://Client/world.gd" id="1_vyl5j"]
 [ext_resource type="Texture2D" uid="uid://c1mgq5q8aqoit" path="res://Assets/PrototypeTextures/prototype_512x512_yellow.png" id="2_q5idp"]
 [ext_resource type="Texture2D" uid="uid://dk2rcron3msrf" path="res://Assets/PrototypeTextures/prototype_512x512_blue1.png" id="3_nqt5i"]
+[ext_resource type="Texture2D" uid="uid://buqd5cerxybx7" path="res://Assets/PrototypeTextures/prototype_512x512_red.png" id="4_ky4st"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hq45l"]
 albedo_texture = ExtResource("1_hvwqw")
@@ -40,8 +42,19 @@ uv1_scale = Vector3(2, -8, 1)
 albedo_texture = ExtResource("2_q5idp")
 uv1_scale = Vector3(2, -10, 1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kmbm5"]
+albedo_texture = ExtResource("4_ky4st")
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1tse7"]
+height = 18.0
+radius = 3.0
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_p4cco"]
 size = Vector3(200, 20, 200)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_cf0is"]
+height = 19.0
+radius = 3.1
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_2cqbr"]
 rayleigh_coefficient = 1.5
@@ -67,6 +80,7 @@ volumetric_fog_emission = Color(0.133333, 0.133333, 0.537255, 1)
 volumetric_fog_emission_energy = 0.0
 
 [node name="World" type="Node3D"]
+script = ExtResource("1_vyl5j")
 
 [node name="Parts" type="Node3D" parent="."]
 
@@ -158,6 +172,20 @@ material = SubResource("StandardMaterial3D_twqep")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 8, 19)
 shape = SubResource("BoxShape3D_rebnm")
 
+[node name="StaticBody3D9" type="StaticBody3D" parent="Parts"]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Parts/StaticBody3D9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+radius = 3.0
+height = 18.0
+sides = 6
+smooth_faces = false
+material = SubResource("StandardMaterial3D_kmbm5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+shape = SubResource("CylinderShape3D_1tse7")
+
 [node name="Killbox" type="Node3D" parent="."]
 
 [node name="Area3D" type="Area3D" parent="Killbox"]
@@ -188,6 +216,10 @@ shape = SubResource("BoxShape3D_p4cco")
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="Killbox/Area3D"]
 transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114e-08, 1, -4.37114e-08, 0, 60, 90)
 shape = SubResource("BoxShape3D_p4cco")
+
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="Killbox/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+shape = SubResource("CylinderShape3D_cf0is")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.940389, 0.282882, 0.188802, -1.77636e-15, -0.555135, 0.83176, 0.340101, -0.782178, -0.522043, 0, 39.0068, 0)

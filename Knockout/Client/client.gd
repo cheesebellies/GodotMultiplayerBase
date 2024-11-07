@@ -51,7 +51,7 @@ func start_game(oppid: int):
 	player = get_node("Player")
 	opponent = get_node("Opponent")
 	get_node("World/Killbox/Area3D").connect("body_entered", _on_killbox_body_entered)
-	spawn_pickup(0,randi_range(0,5))
+	spawn_pickup(0,randi_range(1,5))
 
 func spawn_pickup(ptype: int, pvariation: int):
 	var pup = load("res://Client/pickup.tscn").instantiate()
@@ -73,7 +73,7 @@ func update_opponent_positional(data: Array):
 
 func apply_player_positional(impulse: Vector3):
 	if resetting: return
-	impulse.y *= 0 if impulse.y < 0.0 else 0.5
+	impulse.y *= 0 if impulse.y < 0.0 else 1.0
 	player.impulse(impulse*dmg_percent + Vector3(0,1.5,0))
 
 func remove_opponent():
@@ -118,7 +118,7 @@ func reset_match():
 	add_child(opp)
 	player = get_node("Player")
 	opponent = get_node("Opponent")
-	spawn_pickup(0,randi_range(0,5))
+	spawn_pickup(0,randi_range(1,5))
 	get_node("World/Killbox/Area3D").connect("body_entered", _on_killbox_body_entered)
 	resetting = false
 
