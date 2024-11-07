@@ -155,7 +155,7 @@ size = Vector3(20, 1, 4)
 material = SubResource("StandardMaterial3D_twqep")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D8"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, 19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 8, 19)
 shape = SubResource("BoxShape3D_rebnm")
 
 [node name="Killbox" type="Node3D" parent="."]

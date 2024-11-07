@@ -13,7 +13,7 @@ emission_energy_multiplier = 1.68
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_een6u"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kbgdm"]
-radius = 0.682284
+radius = 1.0
 
 [node name="Pickup" type="Node3D"]
 script = ExtResource("1_6i74e")

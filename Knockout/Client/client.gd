@@ -73,7 +73,7 @@ func update_opponent_positional(data: Array):
 
 func apply_player_positional(impulse: Vector3):
 	if resetting: return
-	impulse.y = 0.0
+	impulse.y *= 0.5
 	player.impulse(impulse*dmg_percent + Vector3(0,1.5,0))
 
 func remove_opponent():
@@ -96,6 +96,10 @@ func hit_opponent(normal: Vector3, weapon: Weapon):
 func reset_match():
 	get_node("Opponent").free()
 	get_node("Player").free()
+	get_node("World").free()
+	var wrld = load("res://Client/world.tscn").instantiate()
+	wrld.name = "World"
+	add_child(wrld)
 	dmg_percent = 1.0
 	var opp_spawn = get_node("World/Opponentspawn").position
 	var player_spawn = get_node("World/Playerspawn").position
@@ -115,6 +119,7 @@ func reset_match():
 	player = get_node("Player")
 	opponent = get_node("Opponent")
 	spawn_pickup(0,randi_range(0,5))
+	get_node("World/Killbox/Area3D").connect("body_entered", _on_killbox_body_entered)
 	resetting = false
 
 func _on_start_pressed():
