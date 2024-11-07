@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bgqu04neoeayj"]
+[gd_scene load_steps=9 format=3 uid="uid://bgqu04neoeayj"]
 
 [ext_resource type="Script" path="res://Client/player.gd" id="1_61x8s"]
 [ext_resource type="PackedScene" uid="uid://by2xerc4qs3hw" path="res://Client/gun.tscn" id="2_i4j81"]
@@ -11,6 +11,8 @@
 material = SubResource("StandardMaterial3D_fhnbn")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nwhx5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oso1d"]
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
@@ -31,12 +33,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 [node name="ReloadTimer" type="Timer" parent="Camera3D/Gun"]
 one_shot = true
 
+[node name="Node3D" type="Node3D" parent="Camera3D/Gun"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.846282, -0.69172, -2.81386)
+
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 target_position = Vector3(0, -999, 0)
-collision_mask = 3
+collision_mask = 19
 hit_back_faces = false
 debug_shape_thickness = 1
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Camera3D/RayCast3D"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/RayCast3D/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -961.559, 4.20213e-05)
+shape = SubResource("BoxShape3D_oso1d")
 
 [node name="HUD" type="Control" parent="Camera3D"]
 layout_mode = 3

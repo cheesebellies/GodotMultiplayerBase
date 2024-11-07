@@ -4,8 +4,8 @@ var ticks = 0
 var tte = 0.0
 var puid: int = -1
 const SPEED = 11.0
-const JUMP_VELOCITY = 4.5
-const GRAVITY = 0.15
+const JUMP_VELOCITY = 6.5
+const GRAVITY = 0.25
 const preproj = preload("res://Client/projectile.tscn")
 @export var just_hit: bool = false
 @export var is_auth: bool = true
@@ -128,10 +128,17 @@ func shoot():
 		proj.speed = 1000
 		proj.direction = -fface
 		proj.exclusions = [self]
+		var part = proj.duplicate()
+		var spt = $Camera3D/Gun/Node3D.global_position
+		var hpt = $Camera3D/RayCast3D.get_collision_point()
+		part.look_at_from_position(spt,hpt)
+		part.direction = (hpt-spt).normalized()
+		part.get_node("Node3D")
+		part.get_node("Node3D").visible = true
 		proj.connect("hit",_projectile_hit)
 		proj.connect("miss",_projectile_miss)
 		get_node("../World").add_child(proj)
-		proj.get_node("Node3D").global_rotation = $Camera3D.global_rotation
+		get_node("../World").add_child(part)
 		current_weapon.mag_count -= 1
 
 func reload():
@@ -192,7 +199,7 @@ func _physics_process(delta):
 					if nvel.length() < velocity.length():
 						velocity = nvel
 			else:
-				velocity += direction * 0.35
+				velocity += direction * 0.55
 			velocity.x *= 0.995
 			velocity.z *= 0.995
 		elif direction:

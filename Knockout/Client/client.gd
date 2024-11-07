@@ -73,7 +73,7 @@ func update_opponent_positional(data: Array):
 
 func apply_player_positional(impulse: Vector3):
 	if resetting: return
-	impulse.y *= 0.5
+	impulse.y *= 0 if impulse.y < 0.0 else 0.5
 	player.impulse(impulse*dmg_percent + Vector3(0,1.5,0))
 
 func remove_opponent():
