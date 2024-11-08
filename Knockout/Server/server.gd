@@ -11,7 +11,7 @@ extends Node
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP, EVENT_TYPE_PICKUP_RESET}
 enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
@@ -147,6 +147,9 @@ func evaluate_pickup(id: int, packet: PackedByteArray):
 func confirm_pickup(is_player: bool, pid: int):
 	client.confirm_pickup_picked_up(is_player, pid)
 
+func reset_pickups_server(id: int):
+	game_state_exclusives["pickups"][game_ids[id]] = {0:true}
+
 
 
 #Bit processing
@@ -203,6 +206,13 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 #Packet functions
 
 
+
+func reset_pickups():
+	var packet = PackedByteArray()
+	packet.resize(2)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PICKUP_RESET)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func echo_pickup_picked_up(id: int, pid: int):
 	var packet = PackedByteArray()
@@ -349,5 +359,7 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 				event_start_echo()
 			elif type == EVENT_TYPE_PICKUP:
 				evaluate_pickup(id,packet)
+			elif type == EVENT_TYPE_PICKUP_RESET:
+				reset_pickups_server(id)
 		PACKET_TYPE_IMPULSE:
 			echo_hit(id,packet)

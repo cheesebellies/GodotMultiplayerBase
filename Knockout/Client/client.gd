@@ -83,6 +83,7 @@ func reset_world():
 	get_node("Player").free()
 	get_node("Opponent").free()
 	get_node("World").free()
+	server.reset_pickups()
 	setup_world()
 	resetting = false
 
