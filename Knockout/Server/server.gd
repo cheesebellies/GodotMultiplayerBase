@@ -31,7 +31,6 @@ enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
 
-var tte: float = 0.0
 var client: Node = null
 var pairings: Dictionary = {}
 var game_ids: Dictionary = {}
@@ -55,11 +54,6 @@ func debuge(tprint):
 #Built-in functions
 
 
-
-func _physics_process(delta):
-	tte += delta
-	if int(tte+1)%20 == 0:
-		request_random_pickup_spawn(randi_range(0,128))
 
 func init():
 	if multiplayer_type != "endpoint":
@@ -322,6 +316,9 @@ func ping_server():
 #Signals
 
 
+
+func _pickup_spawn_timer_timeout():
+	request_random_pickup_spawn(randi_range(0,128))
 
 func _endpoint_server_disconnect():
 	return_to_menu(1)
