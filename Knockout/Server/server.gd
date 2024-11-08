@@ -36,6 +36,7 @@ var pairings: Dictionary = {}
 var game_ids: Dictionary = {}
 var enet_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 var game_state_exclusives: Dictionary = {"pickups": {}}
+var pid_counter: int = 0
 
 
 
@@ -205,13 +206,13 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 
 
-func request_random_pickup_spawn(seed: int):
+func request_random_pickup_spawn(seed: int, pid: int):
 	var packet = PackedByteArray()
 	packet.resize(5)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
 	packet.encode_u8(1,EVENT_TYPE_PICKUP_SPAWN)
 	packet.encode_u8(2,seed)
-	packet.encode_u16(3,1)
+	packet.encode_u16(3,pid)
 	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func reset_pickups():
@@ -318,7 +319,10 @@ func ping_server():
 
 
 func _pickup_spawn_timer_timeout():
-	request_random_pickup_spawn(randi_range(0,128))
+	pid_counter += 1
+	for i in game_state_exclusives["pickups"].keys():
+		game_state_exclusives["pickups"][i][pid_counter] = true
+	request_random_pickup_spawn(randi_range(0,128), pid_counter)
 
 func _endpoint_server_disconnect():
 	return_to_menu(1)

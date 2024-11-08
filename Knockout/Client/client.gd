@@ -123,6 +123,7 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 	pup.pvariation = pvariation
 	pup.position = get_node("World/PickupSpawns").get_children()[location_index].position
 	pup.pid = pid
+	pup.name = "pickup_" + str(pid)
 	pickups[pid] = {"ptype": ptype, "pvariation": pvariation, "location_index": location_index}
 	pup.connect("pickup",_on_pickup_picked_up)
 	get_node("World").add_child(pup)
@@ -138,7 +139,7 @@ func remove_pickup(pid: int):
 
 
 func confirm_pickup_picked_up(is_player: bool, pid: int):
-	if or resetting: return
+	if resetting: return
 	remove_pickup(pid)
 	if !is_player: return
 	var ptype = pickups[pid]["ptype"]
