@@ -27,4 +27,5 @@ visible = false
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D"]
 transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114e-08, 1, -4.37114e-08, 0, 0, 0)
 radius = 0.043821
+height = 8.504
 material = SubResource("StandardMaterial3D_2bwsy")

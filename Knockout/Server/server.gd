@@ -31,6 +31,7 @@ enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
 
+var tte: float = 0.0
 var client: Node = null
 var pairings = {}
 var enet_peer = ENetMultiplayerPeer.new()
@@ -52,6 +53,10 @@ func debuge(tprint):
 #Built-in functions
 
 
+
+func _physics_process(delta):
+	tte += delta
+	
 
 func init():
 	if multiplayer_type != "endpoint":
@@ -184,6 +189,12 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 #Packet functions
 
 
+
+func echo_pickup_picked_up():
+	pass
+
+func pickup_picked_up(pid: int, time: float):
+	pass
 
 func player_death():
 	var packet = PackedByteArray()

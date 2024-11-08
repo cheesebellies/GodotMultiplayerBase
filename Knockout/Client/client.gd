@@ -22,7 +22,7 @@ var player: CharacterBody3D
 var opponent: CharacterBody3D
 var has_opponent: bool = true
 var opponent_id: int
-var pickups: Dictionary = {}
+var pickups: Dictionary = {0:{"ptype":0,"pvariation":4,"location_index":2}}
 
 
 
@@ -97,10 +97,6 @@ func start_game(opponent_id: int):
 	game_started = true
 
 func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
-	pickups[pid] = {"ptype": ptype, "pvariation": pvariation, "location_index": location_index}
-	var pup = pickup_pre.instantiate()
-	pup.ptype = ptype
-	pup.pvariation = pvariation
 	var location_options = get_node("World/PickupSpawns").get_children()
 	var start_index = location_index
 	var success = false
@@ -116,8 +112,12 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 			success = true
 			break
 	if !success: return
+	var pup = pickup_pre.instantiate()
+	pup.ptype = ptype
+	pup.pvariation = pvariation
 	pup.position = get_node("World/PickupSpawns").get_children()[location_index]
 	pup.pid = pid
+	pickups[pid] = {"ptype": ptype, "pvariation": pvariation, "location_index": location_index}
 	pup.connect("pickup",_on_pickup_picked_up)
 	get_node("World").add_child(pup)
 
@@ -129,6 +129,14 @@ func remove_pickup(pid: int):
 #MULTIPLAYER
 
 
+
+func confirm_pickup_picked_up(is_player: bool, pid: int):
+	remove_pickup(pid)
+	if !is_player: return
+	var ptype = pickups[pid]["ptype"]
+	var pvariation = pickups[pid]["pvariation"]
+	if ptype == 0:
+		player.change_gun(pvariation)
 
 func pickup_picked_up(pid: int, time: float):
 	server.pickup_picked_up(pid, time)
@@ -170,11 +178,6 @@ func remove_opponent():
 
 func _on_pickup_picked_up(pid: int):
 	pickup_picked_up(pid, tte)
-	remove_pickup(pid)
-	var ptype = pickups[pid]["ptype"]
-	var pvariation = pickups[pid]["pvariation"]
-	if ptype == 0:
-		player.change_gun(pvariation)
 
 func _on_killbox_body_entered(body: Node3D):
 	if body == player:

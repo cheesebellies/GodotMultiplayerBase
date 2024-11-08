@@ -113,6 +113,7 @@ var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
 
 
 func shoot():
+	if tte <= current_weapon.reload_start+current_weapon.reload_time: return
 	if current_weapon.mag_count <= 0:
 		reload()
 		return
