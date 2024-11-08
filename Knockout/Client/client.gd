@@ -102,6 +102,7 @@ func start_game(opponent_id: int):
 	game_started = true
 
 func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
+	if !game_started or resetting: return
 	var location_options = get_node("World/PickupSpawns").get_children()
 	var start_index = location_index
 	var success = false
@@ -127,6 +128,7 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 	get_node("World").add_child(pup)
 
 func remove_pickup(pid: int):
+	if resetting: return
 	get_node("World/pickup_" + str(pid)).queue_free()
 
 
@@ -136,6 +138,7 @@ func remove_pickup(pid: int):
 
 
 func confirm_pickup_picked_up(is_player: bool, pid: int):
+	if or resetting: return
 	remove_pickup(pid)
 	if !is_player: return
 	var ptype = pickups[pid]["ptype"]
@@ -144,6 +147,7 @@ func confirm_pickup_picked_up(is_player: bool, pid: int):
 		player.change_gun(pvariation)
 
 func pickup_picked_up(pid: int):
+	if resetting: return
 	server.pickup_picked_up(pid)
 
 func apply_player_positional(impulse: Vector3):
