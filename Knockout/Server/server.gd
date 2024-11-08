@@ -11,7 +11,7 @@ extends Node
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP}
 enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
@@ -33,8 +33,10 @@ enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 var tte: float = 0.0
 var client: Node = null
-var pairings = {}
-var enet_peer = ENetMultiplayerPeer.new()
+var pairings: Dictionary = {}
+var game_ids: Dictionary = {}
+var enet_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+var game_state_exclusives: Dictionary = {"pickups": {}}
 
 
 
@@ -106,6 +108,9 @@ func make_pairings():
 			break
 		fl[pl[i]] = pl[i+1]
 		fl[pl[i+1]] = pl[i]
+		game_ids[pl[i]] = i
+		game_ids[pl[i+1]] = i
+		game_state_exclusives["pickups"][i] = {0:true}
 	pairings = fl
 
 func update_position(packet: PackedByteArray):
@@ -132,6 +137,15 @@ func handle_player_disconnect():
 func handle_player_death(wol: int):
 	client.reset_world()
 	debuge("Match won" if wol == EVENT_INFO_MATCH_WON else "Match lost")
+
+func evaluate_pickup(id: int, packet: PackedByteArray):
+	var pid = packet.decode_u16(2)
+	if game_state_exclusives["pickups"][game_ids[id]][pid]:
+		game_state_exclusives["pickups"][game_ids[id]][pid] = false
+		echo_pickup_picked_up(id,pid)
+
+func confirm_pickup(is_player: bool, pid: int):
+	client.confirm_pickup_picked_up(is_player, pid)
 
 
 
@@ -190,11 +204,24 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 
 
-func echo_pickup_picked_up():
-	pass
+func echo_pickup_picked_up(id: int, pid: int):
+	var packet = PackedByteArray()
+	packet.resize(5)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PICKUP)
+	packet.encode_u8(2,0)
+	packet.encode_u16(3,pid)
+	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
+	packet.encode_u8(2,1)
+	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
-func pickup_picked_up(pid: int, time: float):
-	pass
+func pickup_picked_up(pid: int):
+	var packet = PackedByteArray()
+	packet.resize(4)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PICKUP)
+	packet.encode_u16(2,pid)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func player_death():
 	var packet = PackedByteArray()
@@ -291,12 +318,15 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 		PACKET_TYPE_PING:
 			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
-			if packet.decode_u8(1) == EVENT_TYPE_GAME_START:
+			var type = packet.decode_u8(1)
+			if type == EVENT_TYPE_GAME_START:
 				start_game(packet.decode_u8(2),packet.decode_u32(3))
-			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_LEAVE:
+			elif type == EVENT_TYPE_PLAYER_LEAVE:
 				handle_player_disconnect()
-			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_DEATH:
+			elif type == EVENT_TYPE_PLAYER_DEATH:
 				handle_player_death(packet.decode_u8(2))
+			elif type == EVENT_TYPE_PICKUP:
+				confirm_pickup(packet.decode_u16(2) == 0,packet.decode_u16(3)) 
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 
@@ -309,12 +339,15 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 		PACKET_TYPE_PING:
 			ping_response(id)
 		PACKET_TYPE_EVENT:
-			if packet.decode_u8(1) == EVENT_TYPE_PLAYER_DEATH:
+			var type = packet.decode_u8(1)
+			if type == EVENT_TYPE_PLAYER_DEATH:
 				# Matchmaking code here
 				player_death_echo(id, packet)
-			elif packet.decode_u8(1) == EVENT_TYPE_GAME_START:
+			elif type == EVENT_TYPE_GAME_START:
 				multiplayer.multiplayer_peer.refuse_new_connections = true
 				make_pairings()
 				event_start_echo()
+			elif type == EVENT_TYPE_PICKUP:
+				evaluate_pickup(id,packet)
 		PACKET_TYPE_IMPULSE:
 			echo_hit(id,packet)

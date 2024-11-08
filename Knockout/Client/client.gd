@@ -77,6 +77,7 @@ func setup_world():
 	self.player = get_node("Player")
 	self.opponent = get_node("Opponent")
 	get_node("World/Killbox/Area3D").connect("body_entered", _on_killbox_body_entered)
+	get_node("World/pickup_0").connect("pickup",_on_pickup_picked_up)
 
 func reset_world():
 	get_node("Player").free()
@@ -122,7 +123,7 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 	get_node("World").add_child(pup)
 
 func remove_pickup(pid: int):
-	pass
+	get_node("World/pickup_" + str(pid)).queue_free()
 
 
 
@@ -138,8 +139,8 @@ func confirm_pickup_picked_up(is_player: bool, pid: int):
 	if ptype == 0:
 		player.change_gun(pvariation)
 
-func pickup_picked_up(pid: int, time: float):
-	server.pickup_picked_up(pid, time)
+func pickup_picked_up(pid: int):
+	server.pickup_picked_up(pid)
 
 func apply_player_positional(impulse: Vector3):
 	if resetting: return
@@ -177,7 +178,7 @@ func remove_opponent():
 
 
 func _on_pickup_picked_up(pid: int):
-	pickup_picked_up(pid, tte)
+	pickup_picked_up(pid)
 
 func _on_killbox_body_entered(body: Node3D):
 	if body == player:

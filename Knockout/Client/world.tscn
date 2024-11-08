@@ -247,6 +247,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 9.5, 19)
 [node name="Node3D3" type="Node3D" parent="PickupSpawns"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.5, -21)
 
-[node name="Pickup" parent="." instance=ExtResource("6_xme5s")]
+[node name="pickup_0" parent="." instance=ExtResource("6_xme5s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 9.5, 19)
 pvariation = 4
