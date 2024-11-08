@@ -125,7 +125,7 @@ func handle_player_disconnect():
 	debuge("Opponent disconnected")
 
 func handle_player_death(wol: int):
-	client.reset_match()
+	client.reset_world()
 	debuge("Match won" if wol == EVENT_INFO_MATCH_WON else "Match lost")
 
 

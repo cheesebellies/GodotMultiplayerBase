@@ -2,7 +2,6 @@ extends CharacterBody3D
 
 var ticks = 0
 var tte = 0.0
-var puid: int = -1
 const SPEED = 11.0
 const JUMP_VELOCITY = 6.5
 const GRAVITY = 0.25

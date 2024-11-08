@@ -2,10 +2,11 @@ extends Node3D
 
 @export var ptype: int
 @export var pvariation: int
+@export var pid: int
 var atte: float = 0.0
 var rtte: float = 0.0
 
-signal pickup(ptype: int,pvariation: int)
+signal pickup(pid: int)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -21,5 +22,4 @@ func _process(delta):
 
 func _on_hitbox_body_entered(body: Node3D) -> void:
 	if body.name == "Player":
-		emit_signal("pickup",ptype,pvariation)
-		queue_free()
+		emit_signal("pickup",pid)

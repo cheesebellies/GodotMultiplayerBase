@@ -7,6 +7,7 @@ var tick = 0
 var tte = 0.0
 var servers = {}
 
+
 func debug(msg):
 	print("[Menu] \t\t" + str(msg))
 

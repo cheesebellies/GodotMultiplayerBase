@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://chhgteursb0jw"]
+[gd_scene load_steps=2 format=3 uid="uid://chhgteursb0jw"]
 
 [ext_resource type="Script" path="res://Client/client.gd" id="1_y5nvh"]
-[ext_resource type="PackedScene" uid="uid://ddiwsa3s5efjd" path="res://Client/world.tscn" id="3_0d1m3"]
 
 [node name="Client" type="Node"]
 script = ExtResource("1_y5nvh")
@@ -12,13 +11,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Ping" type="Button" parent="Control"]
-visible = false
-layout_mode = 0
-offset_right = 178.0
-offset_bottom = 153.0
-text = "ping server"
-
 [node name="Start" type="Button" parent="Control"]
 layout_mode = 0
 offset_left = 185.0
@@ -26,7 +18,4 @@ offset_right = 363.0
 offset_bottom = 153.0
 text = "Start game"
 
-[node name="World" parent="." instance=ExtResource("3_0d1m3")]
-
-[connection signal="pressed" from="Control/Ping" to="." method="_on_ping_pressed"]
 [connection signal="pressed" from="Control/Start" to="." method="_on_start_pressed"]
