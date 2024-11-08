@@ -11,7 +11,7 @@ extends Node
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP, EVENT_TYPE_PICKUP_RESET}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP, EVENT_TYPE_PICKUP_RESET, EVENT_TYPE_PICKUP_SPAWN}
 enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
@@ -58,7 +58,8 @@ func debuge(tprint):
 
 func _physics_process(delta):
 	tte += delta
-	
+	if int(tte+1)%20 == 0:
+		request_random_pickup_spawn(randi_range(0,128))
 
 func init():
 	if multiplayer_type != "endpoint":
@@ -150,6 +151,9 @@ func confirm_pickup(is_player: bool, pid: int):
 func reset_pickups_server(id: int):
 	game_state_exclusives["pickups"][game_ids[id]] = {0:true}
 
+func spawn_pseudo_random_pickup(seed: int, pid: int):
+	client.spawn_pickup_from_rand(seed, pid)
+
 
 
 #Bit processing
@@ -206,6 +210,15 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 #Packet functions
 
 
+
+func request_random_pickup_spawn(seed: int):
+	var packet = PackedByteArray()
+	packet.resize(5)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PICKUP_SPAWN)
+	packet.encode_u8(2,seed)
+	packet.encode_u16(3,1)
+	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func reset_pickups():
 	var packet = PackedByteArray()
@@ -337,6 +350,8 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 				handle_player_death(packet.decode_u8(2))
 			elif type == EVENT_TYPE_PICKUP:
 				confirm_pickup(packet.decode_u16(2) == 0,packet.decode_u16(3)) 
+			elif type == EVENT_TYPE_PICKUP_SPAWN:
+				spawn_pseudo_random_pickup(packet.decode_u8(2),packet.decode_u16(3))
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 

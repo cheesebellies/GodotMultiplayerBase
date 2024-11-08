@@ -93,6 +93,9 @@ func reset_world():
 
 
 
+func spawn_pickup_from_rand(seed: int, pid: int):
+	spawn_pickup(0,rand_from_seed(seed)[0]%4+1,pid,rand_from_seed(seed)[0]%3)
+
 func start_game(opponent_id: int):
 	self.opponent_id = opponent_id
 	setup_world()
@@ -117,7 +120,7 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 	var pup = pickup_pre.instantiate()
 	pup.ptype = ptype
 	pup.pvariation = pvariation
-	pup.position = get_node("World/PickupSpawns").get_children()[location_index]
+	pup.position = get_node("World/PickupSpawns").get_children()[location_index].position
 	pup.pid = pid
 	pickups[pid] = {"ptype": ptype, "pvariation": pvariation, "location_index": location_index}
 	pup.connect("pickup",_on_pickup_picked_up)
