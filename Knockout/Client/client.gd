@@ -83,9 +83,13 @@ func reset_world():
 	get_node("Player").free()
 	get_node("Opponent").free()
 	get_node("World").free()
-	server.reset_pickups()
+	reset_pickups()
 	setup_world()
 	resetting = false
+
+func reset_pickups():
+	server.reset_pickups()
+	pickups[0] = {"ptype": 0, "pvariation": 4, "location_index": 1}
 
 
 
@@ -102,6 +106,8 @@ func start_game(opponent_id: int):
 	game_started = true
 
 func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
+	debug(location_index)
+	debug(pvariation)
 	if !game_started or resetting: return
 	var location_options = get_node("World/PickupSpawns").get_children()
 	var start_index = location_index

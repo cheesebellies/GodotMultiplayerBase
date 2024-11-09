@@ -65,6 +65,7 @@ func init():
 		multiplayer.peer_packet.connect(_server_packet_received)
 		debugs("Online")
 	else:
+		get_node("Timer").queue_free()
 		enet_peer.create_client(multiplayer_ip, multiplayer_port)
 		multiplayer.multiplayer_peer = enet_peer
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
@@ -207,6 +208,7 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 
 
 func request_random_pickup_spawn(seed: int, pid: int):
+	debugs("Spawning pickup")
 	var packet = PackedByteArray()
 	packet.resize(5)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
