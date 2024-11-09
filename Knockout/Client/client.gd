@@ -22,7 +22,8 @@ var player: CharacterBody3D
 var opponent: CharacterBody3D
 var has_opponent: bool = true
 var opponent_id: int
-var pickups: Dictionary = {0:{"ptype":0,"pvariation":4,"location_index":2}}
+var pickups: Dictionary = {0:{"ptype":0,"pvariation":4,"location_index":1}}
+var used_locations: Array = [1]
 
 
 
@@ -89,7 +90,9 @@ func reset_world():
 
 func reset_pickups():
 	server.reset_pickups()
+	pickups = {}
 	pickups[0] = {"ptype": 0, "pvariation": 4, "location_index": 1}
+	used_locations = [1]
 
 
 
@@ -110,20 +113,15 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 	debug(pvariation)
 	if !game_started or resetting: return
 	var location_options = get_node("World/PickupSpawns").get_children()
-	var start_index = location_index
-	var success = false
-	for aindex in range(0, location_options.size()):
-		var did_fail = false
-		var checkindex = (start_index+aindex)%location_options.size()
-		for pickup in pickups.values():
-			if pickup["location_index"] == checkindex:
-				did_fail = true
-				break
-		if !did_fail:
-			location_index = checkindex
-			success = true
+	if used_locations.size() == location_options.size(): return
+	var count: int = 0
+	while true:
+		if count > location_options.size(): return
+		if used_locations.has((location_index+count)%location_options.size()):
+			count += 1
+		else:
+			location_index = ((location_index+count)%location_options.size())
 			break
-	if !success: return
 	var pup = pickup_pre.instantiate()
 	pup.ptype = ptype
 	pup.pvariation = pvariation
@@ -131,11 +129,14 @@ func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
 	pup.pid = pid
 	pup.name = "pickup_" + str(pid)
 	pickups[pid] = {"ptype": ptype, "pvariation": pvariation, "location_index": location_index}
+	used_locations.append(location_index)
 	pup.connect("pickup",_on_pickup_picked_up)
 	get_node("World").add_child(pup)
 
 func remove_pickup(pid: int):
 	if resetting: return
+	used_locations.erase(pickups[pid]["location_index"])
+	pickups.erase(pid)
 	get_node("World/pickup_" + str(pid)).queue_free()
 
 
@@ -146,12 +147,14 @@ func remove_pickup(pid: int):
 
 func confirm_pickup_picked_up(is_player: bool, pid: int):
 	if resetting: return
-	remove_pickup(pid)
-	if !is_player: return
+	if !is_player: 
+		remove_pickup(pid)
+		return
 	var ptype = pickups[pid]["ptype"]
 	var pvariation = pickups[pid]["pvariation"]
 	if ptype == 0:
 		player.change_gun(pvariation)
+	remove_pickup(pid)
 
 func pickup_picked_up(pid: int):
 	if resetting: return

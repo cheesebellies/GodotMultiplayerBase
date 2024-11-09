@@ -352,7 +352,7 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 			elif type == EVENT_TYPE_PLAYER_DEATH:
 				handle_player_death(packet.decode_u8(2))
 			elif type == EVENT_TYPE_PICKUP:
-				confirm_pickup(packet.decode_u16(2) == 0,packet.decode_u16(3)) 
+				confirm_pickup(packet.decode_u8(2) == 0,packet.decode_u16(3)) 
 			elif type == EVENT_TYPE_PICKUP_SPAWN:
 				spawn_pseudo_random_pickup(packet.decode_u8(2),packet.decode_u16(3))
 		PACKET_TYPE_IMPULSE:
