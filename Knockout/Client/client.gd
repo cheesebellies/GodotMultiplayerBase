@@ -109,8 +109,6 @@ func start_game(opponent_id: int):
 	game_started = true
 
 func spawn_pickup(ptype: int, pvariation: int, pid: int, location_index: int):
-	debug(location_index)
-	debug(pvariation)
 	if !game_started or resetting: return
 	var location_options = get_node("World/PickupSpawns").get_children()
 	if used_locations.size() == location_options.size(): return

@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 var ticks = 0
 var tte = 0.0
-const SPEED = 11.0
+const SPEED = 8.0
 const JUMP_VELOCITY = 6.5
 const GRAVITY = 0.25
 const preproj = preload("res://Client/projectile.tscn")
@@ -193,21 +193,26 @@ func _physics_process(delta):
 			just_hit = false
 		if !is_on_floor():
 			if just_hit:
+				# In the air, just hit. Move at 35% speed so long as it slows you down
 				var nvel = velocity + direction * 0.35
 				var nxyvel = Vector3(velocity.x,0.0,velocity.z)
 				if nxyvel.length() > SPEED:
 					if nvel.length() < velocity.length():
 						velocity = nvel
 			else:
+				# In the air, not just hit. Move at 55% speed
 				velocity += direction * 0.55
+			# Air damping
 			velocity.x *= 0.995
 			velocity.z *= 0.995
 		elif direction:
-			velocity.x = direction.x * SPEED
-			velocity.z = direction.z * SPEED
+			# If on floor and moving
+			velocity.x += direction.x * 1.5
+			velocity.z += direction.z * 1.5
 		else:
-			velocity.x *= 0.675
-			velocity.z *= 0.675
+			# If on floor and not moving
+			velocity.x *= 0.8
+			velocity.z *= 0.8
 		velocity.y -= GRAVITY
 		var xyvel = Vector3(velocity.x,0.0,velocity.z)
 		if !just_hit && (xyvel.length() > SPEED):
