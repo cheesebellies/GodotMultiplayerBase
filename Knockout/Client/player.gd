@@ -11,6 +11,12 @@ const preproj = preload("res://Client/projectile.tscn")
 
 #****************************************************
 #						To-do:
+#
+#
+#				  *****************
+#				  * FIX  MOVEMENT *
+#				  *****************
+#
 #3	- Add a slight aim assist option
 #4	- Implement pickup system (powerups/guns)
 #6	- Implement powerup selection
@@ -205,14 +211,16 @@ func _physics_process(delta):
 			# Air damping
 			velocity.x *= 0.995
 			velocity.z *= 0.995
-		elif direction:
-			# If on floor and moving
-			velocity.x += direction.x * 1.5
-			velocity.z += direction.z * 1.5
 		else:
-			# If on floor and not moving
+			# If on floor and moving
+			velocity.x += direction.x * 1.5 * (1/0.8)
+			velocity.z += direction.z * 1.5 * (1/0.8)
 			velocity.x *= 0.8
 			velocity.z *= 0.8
+		#else:
+			## If on floor and not moving
+			#velocity.x *= 0.8
+			#velocity.z *= 0.8
 		velocity.y -= GRAVITY
 		var xyvel = Vector3(velocity.x,0.0,velocity.z)
 		if !just_hit && (xyvel.length() > SPEED):

@@ -87,7 +87,7 @@ func return_to_menu(code: int):
 	print("[0]\t\t\t\tServer disconnected")
 	if code == 1:
 		pass
-	if multiplayer.is_server(): multiplayer.multiplayer_peer.close()
+	if(multiplayer.is_server()): multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = null
 	get_node("../Client").queue_free()
 	var menu = load("res://Menus/menu.tscn").instantiate()
