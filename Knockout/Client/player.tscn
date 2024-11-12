@@ -41,7 +41,6 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 target_position = Vector3(0, -999, 0)
 collision_mask = 19
 hit_back_faces = false
-debug_shape_thickness = 1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Camera3D/RayCast3D"]
 collision_layer = 16

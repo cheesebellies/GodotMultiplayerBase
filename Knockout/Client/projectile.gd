@@ -23,6 +23,11 @@ func _physics_process(delta):
 	tte += delta
 	var res = move_and_collide(velocity*delta)
 	if res:
+		if !$Node3D.visible:
+			var c = CSGSphere3D.new()
+			c.scale *= 0.1
+			c.position = res.get_position()
+			get_parent().add_child(c)
 		if (res.get_collider().name == "Opponent"):
 			emit_signal("hit",velocity.normalized(),res.get_collider())
 			self.queue_free()

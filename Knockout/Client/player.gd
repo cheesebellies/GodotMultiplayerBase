@@ -12,13 +12,7 @@ const preproj = preload("res://Client/projectile.tscn")
 #****************************************************
 #						To-do:
 #
-#
-#				  *****************
-#				  * FIX  MOVEMENT *
-#				  *****************
-#
 #3	- Add a slight aim assist option
-#4	- Implement pickup system (powerups/guns)
 #6	- Implement powerup selection
 #
 #
@@ -131,11 +125,14 @@ func shoot():
 		var fface = $Camera3D.global_basis.z
 		var proj = preproj.instantiate()
 		proj.position = global_position - fface + Vector3(0,0.731,0)
-		proj.speed = 1000
-		proj.direction = -fface
+		proj.speed = 100
+		var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.02
+		proj.direction = -fface + randface
 		proj.exclusions = [self]
 		var part = proj.duplicate()
 		var spt = $Camera3D/Gun/Node3D.global_position
+		var rct = $Camera3D/RayCast3D
+		rct.look_at_from_position(proj.position,-(proj.direction*proj.speed))
 		var hpt = $Camera3D/RayCast3D.get_collision_point()
 		part.look_at_from_position(spt,hpt)
 		part.direction = (hpt-spt).normalized()
