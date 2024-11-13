@@ -125,18 +125,18 @@ func shoot():
 		var fface = $Camera3D.global_basis.z
 		var proj = preproj.instantiate()
 		proj.position = global_position - fface + Vector3(0,0.731,0)
-		proj.speed = 100
+		proj.speed = 2000
 		var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.02
-		proj.direction = -fface + randface
+		proj.direction = (-fface + randface).normalized()
 		proj.exclusions = [self]
 		var part = proj.duplicate()
 		var spt = $Camera3D/Gun/Node3D.global_position
-		var rct = $Camera3D/RayCast3D
-		rct.look_at_from_position(proj.position,-(proj.direction*proj.speed))
+		$Camera3D/RayCast3D.global_basis = Basis.looking_at(proj.direction)
+		$Camera3D/RayCast3D.rotation_degrees.x += 90
+		$Camera3D/RayCast3D.force_raycast_update()
 		var hpt = $Camera3D/RayCast3D.get_collision_point()
 		part.look_at_from_position(spt,hpt)
 		part.direction = (hpt-spt).normalized()
-		part.get_node("Node3D")
 		part.get_node("Node3D").visible = true
 		proj.connect("hit",_projectile_hit)
 		proj.connect("miss",_projectile_miss)
@@ -242,15 +242,10 @@ func _physics_process(delta):
 # SIGNALS
 
 func _projectile_miss(pos: Vector3, normal: Vector3, vel: Vector3, target: Node):
-	pass
-	#this shit is cursed
-	#var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
-	#var lookat = vel.normalized().bounce(normal)
-	#var lookat = normal
-	#get_node("../World").add_child(spark)
-	#spark.position = pos
-	#spark.look_at(pos+lookat)
-	#spark.get_node("GPUParticles3D").emitting = true
+	var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
+	get_node("../World").add_child(spark)
+	spark.position = pos
+	spark.get_node("GPUParticles3D").emitting = true
 
 func _projectile_hit(normal: Vector3, target: Node3D):
 	if target.name == "Opponent":
