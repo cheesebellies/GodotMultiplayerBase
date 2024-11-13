@@ -13,6 +13,7 @@ material = SubResource("StandardMaterial3D_fhnbn")
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nwhx5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_oso1d"]
+size = Vector3(200, 200, 200)
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
@@ -47,7 +48,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/RayCast3D/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -961.559, 4.20213e-05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -287.751, -3.09348e-05)
 shape = SubResource("BoxShape3D_oso1d")
 
 [node name="HUD" type="Control" parent="Camera3D"]

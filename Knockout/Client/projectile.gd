@@ -23,20 +23,9 @@ func _physics_process(delta):
 	tte += delta
 	var res = move_and_collide(velocity*delta)
 	if res:
-		if !$Node3D.visible:
-			var c = CSGSphere3D.new()
-			c.scale *= 0.1
-			c.position = res.get_position()
-			get_parent().add_child(c)
 		if (res.get_collider().name == "Opponent"):
 			emit_signal("hit",velocity.normalized(),res.get_collider())
 			self.queue_free()
 		else:
 			emit_signal("miss",res.get_position(),res.get_normal(),velocity,res.get_collider())
 			self.queue_free()
-			# var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
-			# var hitpos = res.get_position()
-			# spark.look_at_from_position(hitpos,hitpos + res.get_normal())
-			# get_parent().add_child(spark)
-			# spark.get_node("GPUParticles3D").emitting = true
-			# self.queue_free()

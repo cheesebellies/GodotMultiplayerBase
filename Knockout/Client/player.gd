@@ -33,7 +33,7 @@ var weapons: Dictionary = {
 		1.0,			#reload_time
 		0.3,			#fire_rate
 		1.45,			#KB_mult
-		1.0,			#range
+		1.25,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_RIFLE: Weapon.new(
@@ -44,7 +44,7 @@ var weapons: Dictionary = {
 		0.8,			#reload_time
 		0.2,			#fire_rate
 		2.5,			#KB_mult
-		2.0,			#range
+		3.0,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_AUTO_RIFLE: Weapon.new(
@@ -55,7 +55,7 @@ var weapons: Dictionary = {
 		2.0,			#reload_time
 		0.2,			#fire_rate
 		0.55,			#KB_mult
-		1.0,			#range
+		1.3,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_SHOTGUN: Weapon.new(
@@ -65,8 +65,8 @@ var weapons: Dictionary = {
 		2,				#mag_size
 		2.0,			#reload_time
 		0.8,			#fire_rate
-		4.5,			#KB_mult
-		0.1,			#range
+		0.2,			#KB_mult (PER PROJECTILE)
+		0.3,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_SMG: Weapon.new(
@@ -76,8 +76,8 @@ var weapons: Dictionary = {
 		36,				#mag_size
 		3.5,			#reload_time
 		0.075,			#fire_rate
-		0.25,			#KB_mult
-		0.8,			#range
+		0.18,			#KB_mult
+		0.65,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_LAUNCHER: Weapon.new(
@@ -88,7 +88,7 @@ var weapons: Dictionary = {
 		1.0,			#reload_time
 		0.8,			#fire_rate
 		5.0,			#KB_mult
-		0.5,			#range
+		0.8,			#range
 		load("res://Assets/gun_new.obj")
 	)
 }
@@ -119,30 +119,31 @@ func shoot():
 		return
 	if (current_weapon.last_shot + current_weapon.fire_rate) < tte:
 		current_weapon.last_shot = tte
+		current_weapon.mag_count -= 1
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
 		anim.current_animation = "recoil"
 		anim.speed_scale = 1
-		var fface = $Camera3D.global_basis.z
-		var proj = preproj.instantiate()
-		proj.position = global_position - fface + Vector3(0,0.731,0)
-		proj.speed = 2000
-		var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.02
-		proj.direction = (-fface + randface).normalized()
-		proj.exclusions = [self]
-		var part = proj.duplicate()
-		var spt = $Camera3D/Gun/Node3D.global_position
-		$Camera3D/RayCast3D.global_basis = Basis.looking_at(proj.direction)
-		$Camera3D/RayCast3D.rotation_degrees.x += 90
-		$Camera3D/RayCast3D.force_raycast_update()
-		var hpt = $Camera3D/RayCast3D.get_collision_point()
-		part.look_at_from_position(spt,hpt)
-		part.direction = (hpt-spt).normalized()
-		part.get_node("Node3D").visible = true
-		proj.connect("hit",_projectile_hit)
-		proj.connect("miss",_projectile_miss)
-		get_node("../World").add_child(proj)
-		get_node("../World").add_child(part)
-		current_weapon.mag_count -= 1
+		for parnum in range(1 if current_weapon.type != WEAPON_SHOTGUN else 8):
+			var fface = $Camera3D.global_basis.z
+			var proj = preproj.instantiate()
+			proj.position = global_position - fface + Vector3(0,0.731,0)
+			proj.speed = 1000
+			var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.012
+			proj.direction = (-fface + randface).normalized()
+			proj.exclusions = [self]
+			var part = proj.duplicate()
+			var spt = $Camera3D/Gun/Node3D.global_position
+			$Camera3D/RayCast3D.global_basis = Basis.looking_at(proj.direction)
+			$Camera3D/RayCast3D.rotation_degrees.x += 90
+			$Camera3D/RayCast3D.force_raycast_update()
+			var hpt = $Camera3D/RayCast3D.get_collision_point()
+			part.look_at_from_position(spt,hpt)
+			part.direction = (hpt-spt).normalized()
+			part.get_node("Node3D").visible = true
+			proj.connect("hit",_projectile_hit)
+			proj.connect("miss",_projectile_miss)
+			get_node("../World").add_child(proj)
+			get_node("../World").add_child(part)
 
 func reload():
 	if tte <= current_weapon.reload_start+current_weapon.reload_time: return

@@ -81,6 +81,7 @@ func setup_world():
 	get_node("World/pickup_0").connect("pickup",_on_pickup_picked_up)
 
 func reset_world():
+	if !has_opponent: return
 	get_node("Player").free()
 	get_node("Opponent").free()
 	get_node("World").free()
