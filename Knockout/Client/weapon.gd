@@ -15,6 +15,7 @@ var last_shot: float = -99.0
 var mag_count: int
 var reload_start: float = -99.0
 
+@warning_ignore("shadowed_variable")
 func _init(type: int, description: String, is_auto: bool, mag_size: int, reload_time: float, fire_rate: float, KB_mult: float, range: float, model: Mesh):
 	self.type = type
 	self.description = description

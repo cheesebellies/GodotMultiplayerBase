@@ -2,8 +2,8 @@ extends CharacterBody3D
 
 var ticks = 0
 var tte = 0.0
-const SPEED = 8.0
-const JUMP_VELOCITY = 6.5
+var SPEED = 8.0
+var JUMP_VELOCITY = 6.5
 const GRAVITY = 0.25
 const preproj = preload("res://Client/projectile.tscn")
 @export var just_hit: bool = false
@@ -105,12 +105,37 @@ var weapons: Dictionary = {
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-
+var current_powerup: String = "mobility"
 
 
 # GAMEPLAY FUNCS
 
 
+
+func use_powerup():
+	match current_powerup:
+		"repel":
+			pass
+		"grapple":
+			pass
+		"homing":
+			pass
+		"overclock":
+			pass
+		"mobility":
+			var timer = Timer.new()
+			timer.wait_time = 15
+			timer.name = "powerup_mobility"
+			timer.autostart = true
+			timer.one_shot = true
+			timer.connect("timeout",_powerup_timeout.bind("mobility"))
+			get_parent().add_child(timer)
+			SPEED = 10.0
+			JUMP_VELOCITY = 10.0
+		"tank":
+			pass
+		"shrink":
+			pass
 
 func shoot():
 	if tte <= current_weapon.reload_start+current_weapon.reload_time: return
@@ -233,6 +258,8 @@ func _physics_process(delta):
 				shoot()
 		if Input.is_action_just_pressed("r"):
 			reload()
+		if Input.is_action_just_pressed("q"):
+			use_powerup()
 		$Camera3D/HUD/Label.text = str(current_weapon.mag_count) + " Ammo"
 	move_and_slide()
 	ticks += 1
@@ -242,6 +269,26 @@ func _physics_process(delta):
 
 # SIGNALS
 
+func _powerup_timeout(type: String):
+	match type:
+		"repel":
+			pass
+		"grapple":
+			pass
+		"homing":
+			pass
+		"overclock":
+			pass
+		"mobility":
+			SPEED = 8.0
+			JUMP_VELOCITY = 6.5
+			get_node("../powerup_mobility").queue_free()
+		"tank":
+			pass
+		"shrink":
+			pass
+
+@warning_ignore("unused_parameter")
 func _projectile_miss(pos: Vector3, normal: Vector3, vel: Vector3, target: Node):
 	var spark = load("res://Assets/Particles/bullet_wall.tscn").instantiate()
 	get_node("../World").add_child(spark)

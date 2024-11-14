@@ -6,6 +6,7 @@ extends Node3D
 var atte: float = 0.0
 var rtte: float = 0.0
 
+@warning_ignore("unused_signal")
 signal pickup(pid: int)
 
 # Called when the node enters the scene tree for the first time.

@@ -35,7 +35,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.730504, 0)
 one_shot = true
 
 [node name="Node3D" type="Node3D" parent="Camera3D/Gun"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.846282, -0.69172, -2.81386)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.847435, -0.69172, -2.56306)
 
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)

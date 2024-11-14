@@ -8,7 +8,9 @@ extends CharacterBody3D
 
 var tte = 0.0
 
+@warning_ignore("unused_signal")
 signal hit(normal: Vector3, target: Node)
+@warning_ignore("unused_signal")
 signal miss(position: Vector3, normal: Vector3, velocity: Vector3, target: Node)
 
 func _ready():

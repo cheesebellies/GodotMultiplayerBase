@@ -46,7 +46,7 @@ func _ready() -> void:
 	if multiplayer_type != "admin":
 		$Control.queue_free()
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if game_started and has_opponent and !resetting:
 		server.send_positional(player)
 
