@@ -94,18 +94,18 @@ var weapons: Dictionary = {
 }
 
 @export var has_powerup: Dictionary = {
-	"repel": false,		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
-	"grapple": false,	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
-	"homing": false,	# Short (3 seconds) that gives all shots fired a minor homing ability
-	"overclock": false,	# Medium (9 seconds) that increases weapon fire rate
-	"mobility": false,	# Long (15 seconds) that improves all movement: speed, air maneuverability, jump, etc.
-	"tank": false,		# Long (15 seconds) that reduces knockback, but also increases size
-	"shrink": false,	# Long (15 seconds) that reduces player size, but also increases knockback
-	"savior": false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
+	POWERUP_REPEL: false,		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
+	POWERUP_GRAPPLE: false,	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
+	POWERUP_HOMING: false,	# Short (3 seconds) that gives all shots fired a minor homing ability
+	POWERUP_OVERCLOCK: false,	# Medium (9 seconds) that increases weapon fire rate
+	POWERUP_MOBILITY: false,	# Long (15 seconds) that improves all movement: speed, air maneuverability, jump, etc.
+	POWERUP_TANK: false,		# Long (15 seconds) that reduces knockback, but also increases size
+	POWERUP_SHRINK: false,	# Long (15 seconds) that reduces player size, but also increases knockback
+	POWERUP_SAVIOR: false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-var current_powerup: String = "mobility"
+var current_powerup: int = POWERUP_MOBILITY
 
 
 # GAMEPLAY FUNCS
@@ -114,15 +114,15 @@ var current_powerup: String = "mobility"
 
 func use_powerup():
 	match current_powerup:
-		"repel":
+		POWERUP_REPEL:
 			pass
-		"grapple":
+		POWERUP_GRAPPLE:
 			pass
-		"homing":
+		POWERUP_HOMING:
 			pass
-		"overclock":
+		POWERUP_OVERCLOCK:
 			pass
-		"mobility":
+		POWERUP_MOBILITY:
 			var timer = Timer.new()
 			timer.wait_time = 15
 			timer.name = "powerup_mobility"
@@ -132,9 +132,9 @@ func use_powerup():
 			get_parent().add_child(timer)
 			SPEED = 10.0
 			JUMP_VELOCITY = 10.0
-		"tank":
+		POWERUP_TANK:
 			pass
-		"shrink":
+		POWERUP_SHRINK:
 			pass
 
 func shoot():
@@ -211,6 +211,7 @@ func _input(event):
 		$Camera3D.rotation.x = clamp($Camera3D.rotation.x, -PI/2, PI/2)
 
 func _physics_process(delta):
+	print("SPEED: " + str(velocity.length()))
 	if is_auth:
 		if Input.is_action_just_pressed("ui_cancel"):
 			Input.mouse_mode = abs(Input.mouse_mode - 2)
@@ -236,14 +237,10 @@ func _physics_process(delta):
 			velocity.z *= 0.995
 		else:
 			# If on floor and moving
-			velocity.x += direction.x * 1.5 * (1/0.8)
-			velocity.z += direction.z * 1.5 * (1/0.8)
+			velocity.x += direction.x * 1.5 * (2/0.8)
+			velocity.z += direction.z * 1.5 * (2/0.8)
 			velocity.x *= 0.8
 			velocity.z *= 0.8
-		#else:
-			## If on floor and not moving
-			#velocity.x *= 0.8
-			#velocity.z *= 0.8
 		velocity.y -= GRAVITY
 		var xyvel = Vector3(velocity.x,0.0,velocity.z)
 		if !just_hit && (xyvel.length() > SPEED):
@@ -270,22 +267,22 @@ func _physics_process(delta):
 # SIGNALS
 
 func _powerup_timeout(type: String):
-	match type:
-		"repel":
+	match current_powerup:
+		POWERUP_REPEL:
 			pass
-		"grapple":
+		POWERUP_GRAPPLE:
 			pass
-		"homing":
+		POWERUP_HOMING:
 			pass
-		"overclock":
+		POWERUP_OVERCLOCK:
 			pass
-		"mobility":
+		POWERUP_MOBILITY:
 			SPEED = 8.0
 			JUMP_VELOCITY = 6.5
 			get_node("../powerup_mobility").queue_free()
-		"tank":
+		POWERUP_TANK:
 			pass
-		"shrink":
+		POWERUP_SHRINK:
 			pass
 
 @warning_ignore("unused_parameter")
