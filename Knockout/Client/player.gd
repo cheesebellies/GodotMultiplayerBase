@@ -105,12 +105,24 @@ var weapons: Dictionary = {
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-var current_powerup: int = POWERUP_MOBILITY
+var current_powerup: int = POWERUP_HOMING
+var fire_rate_mod: float = 1.0
+var has_homing: bool = false
+
 
 
 # GAMEPLAY FUNCS
 
 
+
+func powerup_timeout(time: float, type: int):
+	var timer = Timer.new()
+	timer.wait_time = time
+	timer.name = "powerup_" + str(type)
+	timer.autostart = true
+	timer.one_shot = true
+	timer.connect("timeout",_powerup_timeout.bind(type))
+	get_parent().add_child(timer)
 
 func use_powerup():
 	match current_powerup:
@@ -119,17 +131,13 @@ func use_powerup():
 		POWERUP_GRAPPLE:
 			pass
 		POWERUP_HOMING:
-			pass
+			powerup_timeout(3,POWERUP_HOMING)
+			has_homing = true
 		POWERUP_OVERCLOCK:
-			pass
+			powerup_timeout(9,POWERUP_OVERCLOCK)
+			fire_rate_mod = 1.5
 		POWERUP_MOBILITY:
-			var timer = Timer.new()
-			timer.wait_time = 15
-			timer.name = "powerup_mobility"
-			timer.autostart = true
-			timer.one_shot = true
-			timer.connect("timeout",_powerup_timeout.bind("mobility"))
-			get_parent().add_child(timer)
+			powerup_timeout(15,POWERUP_MOBILITY)
 			SPEED = 10.0
 			JUMP_VELOCITY = 10.0
 		POWERUP_TANK:
@@ -142,7 +150,7 @@ func shoot():
 	if current_weapon.mag_count <= 0:
 		reload()
 		return
-	if (current_weapon.last_shot + current_weapon.fire_rate) < tte:
+	if (current_weapon.last_shot + (current_weapon.fire_rate * (2-fire_rate_mod))) < tte:
 		current_weapon.last_shot = tte
 		current_weapon.mag_count -= 1
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
@@ -151,6 +159,7 @@ func shoot():
 		for parnum in range(1 if current_weapon.type != WEAPON_SHOTGUN else 8):
 			var fface = $Camera3D.global_basis.z
 			var proj = preproj.instantiate()
+			proj.homing = has_homing
 			proj.position = global_position - fface + Vector3(0,0.731,0)
 			proj.speed = 1000
 			var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.012
@@ -211,7 +220,6 @@ func _input(event):
 		$Camera3D.rotation.x = clamp($Camera3D.rotation.x, -PI/2, PI/2)
 
 func _physics_process(delta):
-	print("SPEED: " + str(velocity.length()))
 	if is_auth:
 		if Input.is_action_just_pressed("ui_cancel"):
 			Input.mouse_mode = abs(Input.mouse_mode - 2)
@@ -275,11 +283,12 @@ func _powerup_timeout(type: String):
 		POWERUP_HOMING:
 			pass
 		POWERUP_OVERCLOCK:
-			pass
+			fire_rate_mod = 1.0
+			get_node("../powerup_" + str(type)).queue_free()
 		POWERUP_MOBILITY:
 			SPEED = 8.0
 			JUMP_VELOCITY = 6.5
-			get_node("../powerup_mobility").queue_free()
+			get_node("../powerup_" + str(type)).queue_free()
 		POWERUP_TANK:
 			pass
 		POWERUP_SHRINK:

@@ -5,6 +5,7 @@ extends CharacterBody3D
 @export var expires: float = 2.0
 @export var exclusions: Array
 @export var mesh: Mesh
+@export var homing: bool = false
 
 var tte = 0.0
 
@@ -23,6 +24,13 @@ func _physics_process(delta):
 	if tte >= expires:
 		self.queue_free()
 	tte += delta
+	if homing:
+		var opos = get_node("../../Opponent").global_position
+		var ppos = get_node("../../Player").global_position
+		var tpos = ppos + (opos-ppos)*0.6
+		var mod = (tpos - global_position).normalized()
+		velocity += mod*speed*0.05
+		velocity = velocity.normalized() * speed
 	var res = move_and_collide(velocity*delta)
 	if res:
 		if (res.get_collider().name == "Opponent"):
