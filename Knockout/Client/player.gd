@@ -281,7 +281,8 @@ func _powerup_timeout(type: String):
 		POWERUP_GRAPPLE:
 			pass
 		POWERUP_HOMING:
-			pass
+			has_homing = false
+			get_node("../powerup_" + str(type)).queue_free()
 		POWERUP_OVERCLOCK:
 			fire_rate_mod = 1.0
 			get_node("../powerup_" + str(type)).queue_free()
