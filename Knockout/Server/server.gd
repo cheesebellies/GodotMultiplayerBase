@@ -6,6 +6,10 @@ extends Node
 
 
 
+const PICKUP_LOCATIONS: int = 4
+
+
+
 #Enums
 
 
@@ -146,9 +150,23 @@ func confirm_pickup(is_player: bool, pid: int):
 
 func reset_pickups_server(id: int):
 	game_state_exclusives["pickups"][game_ids[id]] = {0:true}
+	#game_state_exclusives["pickups"][game_ids[id]] = {0: {"location": 2, "available": true}}
 
 func spawn_pseudo_random_pickup(seed: int, pid: int):
 	client.spawn_pickup_from_rand(seed, pid)
+
+func WIP_spawn_pickup():
+	for GSEkey in game_state_exclusives["pickups"].keys():
+		var has = []
+		for i in game_state_exclusives["pickups"][GSEkey].values(): has.append(i["location"])
+		if has.size >= PICKUP_LOCATIONS: continue
+		var locations = [0,1,2,3]
+		for i in has: locations.erase(i)
+		var loc_choice = locations.pick_random()
+		var type = randi_range(0,1)
+		var variation = randi_range(1,5) if type == 0 else randi_range(0,7)
+		game_state_exclusives["pickups"][GSEkey][pid_counter] = {"location": loc_choice, "available": true}
+		force_spawn_pickup(pid_counter,type,variation,loc_choice)
 
 
 
@@ -206,6 +224,18 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 #Packet functions
 
 
+
+func force_spawn_pickup(pid: int, type: int, variation: int, location: int):
+	debugs("Force spawning pickup")
+	var packet = PackedByteArray()
+	packet.resize(7)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_PICKUP_SPAWN)
+	packet.encode_u16(2,pid)
+	packet.encode_u8(4,type)
+	packet.encode_u8(5,variation)
+	packet.encode_u8(6,location)
+	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func request_random_pickup_spawn(seed: int, pid: int):
 	debugs("Spawning pickup")
