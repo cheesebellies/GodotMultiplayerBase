@@ -14,7 +14,7 @@ func _ready():
 	if ptype == 0:
 		$CSGSphere3D/Label3D.text = ["REVOLVER","RIFLE","AUTO RIFLE","SHOTGUN","SMG","LAUNCHER"][pvariation]
 	else:
-		$CSGSphere3D/Label3D.text = ["REPEL","GRAPPLE","HOMING","OVERCLOCK","MOBILITY","TANK","SHRINK","SAVIOR"][pvariation]
+		$CSGSphere3D/Label3D.text = ["REPEL","NULL","HOMING","OVERCLOCK","MOBILITY","NULL","NULL","NULL"][pvariation]
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

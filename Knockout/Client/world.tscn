@@ -19,7 +19,7 @@ albedo_texture = ExtResource("1_hvwqw")
 uv1_scale = Vector3(27, -7, 25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n28fk"]
-size = Vector3(14, 1, 68)
+size = Vector3(14, 1, 54)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bccyd"]
 albedo_texture = ExtResource("1_hvwqw")
@@ -115,7 +115,7 @@ size = Vector3(14, 1, 54)
 material = SubResource("StandardMaterial3D_jehcg")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Parts/StaticBody3D10"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.91022)
 shape = SubResource("BoxShape3D_n28fk")
 
 [node name="StaticBody3D11" type="StaticBody3D" parent="Parts"]
