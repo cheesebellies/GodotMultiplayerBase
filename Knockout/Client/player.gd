@@ -105,7 +105,7 @@ var weapons: Dictionary = {
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-var current_powerup: int = POWERUP_REPEL
+var current_powerup: int = POWERUP_HOMING
 var fire_rate_mod: float = 1.0
 var has_homing: bool = false
 

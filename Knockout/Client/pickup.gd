@@ -11,7 +11,10 @@ signal pickup(pid: int)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$CSGSphere3D/Label3D.text = ["REVOLVER","RIFLE","AUTO RIFLE","SHOTGUN","SMG","LAUNCHER"][pvariation]
+	if ptype == 0:
+		$CSGSphere3D/Label3D.text = ["REVOLVER","RIFLE","AUTO RIFLE","SHOTGUN","SMG","LAUNCHER"][pvariation]
+	else:
+		$CSGSphere3D/Label3D.text = ["REPEL","GRAPPLE","HOMING","OVERCLOCK","MOBILITY","TANK","SHRINK","SAVIOR"][pvariation]
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
