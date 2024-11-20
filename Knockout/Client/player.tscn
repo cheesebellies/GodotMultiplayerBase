@@ -95,6 +95,16 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 60
 
+[node name="Label2" type="Label" parent="Camera3D/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -65.0
+offset_bottom = 83.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 60
+
 [node name="Showgun" type="MeshInstance3D" parent="."]
 transform = Transform3D(-0.00120524, 0, 0.0599879, 0, 0.06, 0, -0.0599879, 0, -0.00120524, 0.406698, 0.352911, -0.232804)
 mesh = ExtResource("2_n5cl6")

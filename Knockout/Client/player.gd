@@ -105,7 +105,7 @@ var weapons: Dictionary = {
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-var current_powerup: int = POWERUP_HOMING
+var current_powerup = null
 var fire_rate_mod: float = 1.0
 var has_homing: bool = false
 
@@ -129,6 +129,7 @@ func powerup_timeout(time: float, type: int):
 	get_parent().add_child(timer)
 
 func use_powerup():
+	if !current_powerup: return
 	match current_powerup:
 		POWERUP_REPEL:
 			var diff = (get_node("../Opponent").global_position-global_position)
@@ -151,6 +152,7 @@ func use_powerup():
 			pass
 		POWERUP_SHRINK:
 			pass
+	current_powerup = null
 
 func shoot():
 	if tte <= current_weapon.reload_start+current_weapon.reload_time: return
@@ -273,6 +275,10 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("q"):
 			use_powerup()
 		$Camera3D/HUD/Label.text = str(current_weapon.mag_count) + " Ammo"
+		if current_powerup:
+			$Camera3D/HUD/Label2.text = "[Q]" + str(["REPEL","NULL","HOMING","OVERCLOCK","MOBILITY","NULL","NULL","NULL"][current_powerup])
+		else:
+			$Camera3D/HUD/Label2.text = ""
 	move_and_slide()
 	ticks += 1
 	tte += delta
