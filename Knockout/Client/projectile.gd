@@ -7,7 +7,6 @@ extends CharacterBody3D
 @export var mesh: Mesh
 @export var homing: bool = false
 
-var sdif = null
 var tte = 0.0
 
 @warning_ignore("unused_signal")
@@ -31,10 +30,9 @@ func _physics_process(delta):
 		var tdir = tvel.normalized()
 		var tlen = tvel.length()
 		var adif = velocity.normalized().angle_to(tdir)
-		if !sdif: sdif = adif
-		if sdif < 30.0:
+		if adif != 0:
 			var dfac = clamp(tlen / 100, 0.1, 1.0)
-			var sctr = 180.0 * 2.0 * dfac
+			var sctr = 120.0 * 2.0 * dfac
 			var cang = min(adif, deg_to_rad(sctr * delta))
 			var fdir = velocity.normalized().slerp(tdir, cang / adif).normalized()
 			velocity = fdir * speed

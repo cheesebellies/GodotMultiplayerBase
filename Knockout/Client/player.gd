@@ -105,7 +105,7 @@ var weapons: Dictionary = {
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-var current_powerup: int = POWERUP_HOMING
+var current_powerup: int = POWERUP_REPEL
 var fire_rate_mod: float = 1.0
 var has_homing: bool = false
 
@@ -116,6 +116,10 @@ var has_homing: bool = false
 
 
 func powerup_timeout(time: float, type: int):
+	var htimer = get_node_or_null("../powerup_" + str(type))
+	if htimer:
+		htimer.wait_time += time
+		return
 	var timer = Timer.new()
 	timer.wait_time = time
 	timer.name = "powerup_" + str(type)
@@ -127,7 +131,10 @@ func powerup_timeout(time: float, type: int):
 func use_powerup():
 	match current_powerup:
 		POWERUP_REPEL:
-			pass
+			var diff = (get_node("../Opponent").global_position-global_position)
+			var dist = diff.length()
+			var mdir = diff/((dist/1.5)**2)
+			get_parent().hit_opponent(mdir,weapons[WEAPON_RIFLE])
 		POWERUP_GRAPPLE:
 			pass
 		POWERUP_HOMING:
@@ -274,7 +281,7 @@ func _physics_process(delta):
 
 # SIGNALS 
 
-func _powerup_timeout(type: String):
+func _powerup_timeout(type: int):
 	match current_powerup:
 		POWERUP_REPEL:
 			pass
