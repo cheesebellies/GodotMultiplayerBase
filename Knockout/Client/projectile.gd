@@ -19,23 +19,12 @@ func _ready():
 	for e in exclusions:
 		self.add_collision_exception_with(e)
 	if mesh: $MeshInstance3D.mesh=mesh
+	$Node3D.global_basis = Basis.looking_at(velocity)
 
 func _physics_process(delta):
 	if tte >= expires:
 		self.queue_free()
 	tte += delta
-	if homing:
-		var opos = get_node("../../Opponent").global_position
-		var tvel = (opos - global_position)
-		var tdir = tvel.normalized()
-		var tlen = tvel.length()
-		var adif = velocity.normalized().angle_to(tdir)
-		if adif != 0:
-			var dfac = clamp(tlen / 100, 0.1, 1.0)
-			var sctr = 120.0 * 2.0 * dfac
-			var cang = min(adif, deg_to_rad(sctr * delta))
-			var fdir = velocity.normalized().slerp(tdir, cang / adif).normalized()
-			velocity = fdir * speed
 	var res = move_and_collide(velocity*delta)
 	if res:
 		if (res.get_collider().name == "Opponent"):
@@ -44,3 +33,16 @@ func _physics_process(delta):
 		else:
 			emit_signal("miss",res.get_position(),res.get_normal(),velocity,res.get_collider())
 			self.queue_free()
+	if homing:
+		var opos = get_node("../../Opponent").global_position
+		var tvel = (opos - global_position)
+		var tdir = tvel.normalized()
+		var tlen = tvel.length()
+		var adif = velocity.normalized().angle_to(tdir)
+		if adif != 0:
+			var dfac = clamp(tlen / 100, 0.1, 1.0)
+			var sctr = 180.0 * 2.0 * dfac
+			var cang = min(adif, deg_to_rad(sctr * delta))
+			var fdir = velocity.normalized().slerp(tdir, cang / adif).normalized()
+			velocity = fdir * speed
+	$Node3D.global_basis = Basis.looking_at(velocity)

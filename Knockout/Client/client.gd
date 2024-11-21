@@ -15,6 +15,7 @@ var pickup_pre = preload("res://Client/pickup.tscn")
 var ticks: int = 0
 var tte: float = 0.0
 var resetting: bool = false
+const preproj = preload("res://Client/projectile.tscn")
 
 #Multiplayer
 var server: Node
@@ -99,6 +100,9 @@ func reset_pickups():
 
 
 
+func send_tracer(direction: Vector3, speed: float, homing: bool):
+	server.send_tracer(direction,speed,homing)
+
 func force_spawn_pickup(pid: int, type: int, variation: int, location: int):
 	spawn_pickup(pid,type,variation,location)
 
@@ -139,6 +143,17 @@ func remove_pickup(pid: int):
 #MULTIPLAYER
 
 
+
+func spawn_tracer(direction: Vector3, speed: float, homing: bool):
+	var proj = preproj.instantiate()
+	proj.homing = homing
+	proj.position = opponent.get_node("Camera3D/Gun/Node3D").global_position
+	proj.speed = speed
+	proj.direction = direction
+	proj.exclusions = [opponent]
+	proj.get_node("Node3D").visible = true
+	proj.connect("miss",player._projectile_miss)
+	get_node("World").add_child(proj)
 
 func confirm_pickup_picked_up(is_player: bool, pid: int):
 	if resetting: return

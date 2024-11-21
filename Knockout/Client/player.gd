@@ -32,8 +32,8 @@ var weapons: Dictionary = {
 		6,				#mag_size
 		1.0,			#reload_time
 		0.3,			#fire_rate
-		1.45,			#KB_mult
-		1.25,			#range
+		1.25,			#KB_mult
+		2.0,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_RIFLE: Weapon.new(
@@ -54,8 +54,8 @@ var weapons: Dictionary = {
 		18,				#mag_size
 		2.0,			#reload_time
 		0.2,			#fire_rate
-		0.55,			#KB_mult
-		1.3,			#range
+		0.85,			#KB_mult
+		2.2,			#range
 		load("res://Assets/gun_new.obj")
 	),
 	WEAPON_SHOTGUN: Weapon.new(
@@ -65,7 +65,7 @@ var weapons: Dictionary = {
 		2,				#mag_size
 		2.0,			#reload_time
 		0.8,			#fire_rate
-		0.2,			#KB_mult (PER PROJECTILE)
+		0.35,			#KB_mult (PER PROJECTILE)
 		0.3,			#range
 		load("res://Assets/gun_new.obj")
 	),
@@ -76,7 +76,7 @@ var weapons: Dictionary = {
 		36,				#mag_size
 		3.5,			#reload_time
 		0.075,			#fire_rate
-		0.18,			#KB_mult
+		0.3,			#KB_mult
 		0.65,			#range
 		load("res://Assets/gun_new.obj")
 	),
@@ -88,24 +88,24 @@ var weapons: Dictionary = {
 		1.0,			#reload_time
 		0.8,			#fire_rate
 		5.0,			#KB_mult
-		0.8,			#range
+		0.75,			#range
 		load("res://Assets/gun_new.obj")
 	)
 }
 
 @export var has_powerup: Dictionary = {
 	POWERUP_REPEL: false,		# Instant that repels the opponent based on distance, but also repels the player a smaller amount in the inverse direction
-	POWERUP_GRAPPLE: false,	# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
-	POWERUP_HOMING: false,	# Short (3 seconds) that gives all shots fired a minor homing ability
+	POWERUP_GRAPPLE: false,		# Instant (cancelable) that grapples player towards whatever it is fired at. If it hits the opponent, they are grappled to each other
+	POWERUP_HOMING: false,		# Short (3 seconds) that gives all shots fired a minor homing ability
 	POWERUP_OVERCLOCK: false,	# Medium (9 seconds) that increases weapon fire rate
 	POWERUP_MOBILITY: false,	# Long (15 seconds) that improves all movement: speed, air maneuverability, jump, etc.
 	POWERUP_TANK: false,		# Long (15 seconds) that reduces knockback, but also increases size
-	POWERUP_SHRINK: false,	# Long (15 seconds) that reduces player size, but also increases knockback
+	POWERUP_SHRINK: false,		# Long (15 seconds) that reduces player size, but also increases knockback
 	POWERUP_SAVIOR: false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
 
 var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
-var current_powerup = null
+var current_powerup = POWERUP_HOMING
 var fire_rate_mod: float = 1.0
 var has_homing: bool = false
 
@@ -187,6 +187,7 @@ func shoot():
 			proj.connect("miss",_projectile_miss)
 			get_node("../World").add_child(proj)
 			get_node("../World").add_child(part)
+			get_parent().send_tracer(part.direction, 1000.0, part.homing)
 
 func reload():
 	if tte <= current_weapon.reload_start+current_weapon.reload_time: return
@@ -215,9 +216,9 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	$Camera3D/RayCast3D.add_exception(self)
 	if name == "Opponent":
-		$Camera3D/Gun.queue_free()
+		$Camera3D/Gun.visible = false
 	else:
-		$Showgun.queue_free()
+		$Showgun.visible = false
 	$Camera3D/Gun/ReloadTimer.connect("timeout",_reload_complete)
 
 func _input(event):

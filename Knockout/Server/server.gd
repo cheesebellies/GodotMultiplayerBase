@@ -15,7 +15,7 @@ const PICKUP_LOCATIONS: int = 4
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP, EVENT_TYPE_PICKUP_RESET, EVENT_TYPE_PICKUP_SPAWN}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP, EVENT_TYPE_PICKUP_RESET, EVENT_TYPE_PICKUP_SPAWN, EVENT_TYPE_TRACER}
 enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
@@ -167,6 +167,13 @@ func spawn_pickup():
 func client_force_spawn_pickup(pid: int, type: int, variation: int, location: int):
 	client.force_spawn_pickup(pid,type,variation,location)
 
+func spawn_client_tracer(packet: PackedByteArray):
+	var data = unpack_tracer(packet)
+	var direction = data[0]
+	var speed = data[1]
+	var homing = data[2]
+	client.spawn_tracer(direction,speed,homing)
+
 
 
 #Bit processing
@@ -218,11 +225,41 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 	packet.encode_float(37,rot.z)
 	return packet
 
+func pack_tracer(direction: Vector3, speed: float, homing: bool) -> PackedByteArray:
+	var packet = PackedByteArray()
+	packet.resize(23)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_TRACER)
+	packet.encode_float(2,direction.x)
+	packet.encode_float(6,direction.y)
+	packet.encode_float(10,direction.z)
+	packet.encode_double(14,speed)
+	packet.encode_u8(22,0 if homing else 1)
+	return packet
+
+func unpack_tracer(packet: PackedByteArray) -> Array:
+	var direction: Vector3 = Vector3(0,0,0)
+	var speed: float = 0.0
+	var homing: bool = false
+	direction.x = packet.decode_float(2)
+	direction.y = packet.decode_float(6)
+	direction.z = packet.decode_float(10)
+	speed = packet.decode_double(14)
+	homing = packet.decode_u8(22) == 0
+	return [direction,speed,homing]
+
 
 
 #Packet functions
 
 
+
+func echo_tracer(packet: PackedByteArray, id: int):
+	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,2)
+
+func send_tracer(direction: Vector3, speed: float, homing: bool):
+	var packet = pack_tracer(direction,speed,homing)
+	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,2)
 
 func force_spawn_pickup(pid: int, type: int, variation: int, location: int):
 	debugs("Force spawning pickup")
@@ -362,6 +399,8 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 			debuge("Ping Successful")
 		PACKET_TYPE_EVENT:
 			var type = packet.decode_u8(1)
+			if type == EVENT_TYPE_TRACER:
+				spawn_client_tracer(packet)
 			if type == EVENT_TYPE_GAME_START:
 				start_game(packet.decode_u8(2),packet.decode_u32(3))
 			elif type == EVENT_TYPE_PLAYER_LEAVE:
@@ -385,7 +424,9 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 			ping_response(id)
 		PACKET_TYPE_EVENT:
 			var type = packet.decode_u8(1)
-			if type == EVENT_TYPE_PLAYER_DEATH:
+			if type == EVENT_TYPE_TRACER:
+				echo_tracer(packet,id)
+			elif type == EVENT_TYPE_PLAYER_DEATH:
 				# Matchmaking code here
 				player_death_echo(id, packet)
 			elif type == EVENT_TYPE_GAME_START:
