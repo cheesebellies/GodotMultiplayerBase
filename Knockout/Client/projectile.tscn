@@ -29,3 +29,9 @@ transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114
 radius = 0.043821
 height = 2.136
 material = SubResource("StandardMaterial3D_2bwsy")
+
+[node name="CSGCylinder3D2" type="CSGCylinder3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+visible = false
+radius = 0.15
+height = 0.5

@@ -87,8 +87,8 @@ var weapons: Dictionary = {
 		3,				#mag_size
 		1.0,			#reload_time
 		0.8,			#fire_rate
-		5.0,			#KB_mult
-		0.75,			#range
+		3.3,			#KB_mult
+		0.35,			#range
 		load("res://Assets/gun_new.obj")
 	)
 }
@@ -104,7 +104,7 @@ var weapons: Dictionary = {
 	POWERUP_SAVIOR: false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
 
-var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
+var current_weapon: Weapon = weapons[WEAPON_LAUNCHER]
 var current_powerup = POWERUP_HOMING
 var fire_rate_mod: float = 1.0
 var has_homing: bool = false
@@ -165,12 +165,35 @@ func shoot():
 		var anim = $Camera3D/Gun.get_node("AnimationPlayer")
 		anim.current_animation = "recoil"
 		anim.speed_scale = 1
+		if current_weapon.type == WEAPON_LAUNCHER:
+			var fface = $Camera3D.global_basis.z
+			var part = preproj.instantiate()
+			part.homing = has_homing
+			part.target = get_node("../Opponent")
+			part.grenade = true
+			part.speed = 50
+			var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.012
+			part.exclusions = [self]
+			var spt = $Camera3D/Gun/Node3D.global_position
+			$Camera3D/RayCast3D.global_basis = Basis.looking_at((-fface + randface).normalized())
+			$Camera3D/RayCast3D.rotation_degrees.x += 90
+			$Camera3D/RayCast3D.force_raycast_update()
+			var hpt = $Camera3D/RayCast3D.get_collision_point()
+			part.look_at_from_position(spt,hpt)
+			part.direction = (hpt-spt).normalized()
+			part.get_node("Node3D").visible = true
+			part.connect("hit",_grenade_hit)
+			part.connect("miss",_grenade_hit)
+			get_node("../World").add_child(part)
+			get_parent().send_tracer(part.direction, 50.0, part.homing, part.grenade)
+			return
 		for parnum in range(1 if current_weapon.type != WEAPON_SHOTGUN else 8):
 			var fface = $Camera3D.global_basis.z
 			var proj = preproj.instantiate()
 			proj.homing = has_homing
+			proj.target = get_node("../Opponent")
 			proj.position = global_position - fface + Vector3(0,0.731,0)
-			proj.speed = 1000
+			proj.speed = 1000.0
 			var randface = Vector3(randf_range(-1,1),randf_range(-1,1),randf_range(-1,1))*(1/current_weapon.range)*0.012
 			proj.direction = (-fface + randface).normalized()
 			proj.exclusions = [self]
@@ -187,7 +210,7 @@ func shoot():
 			proj.connect("miss",_projectile_miss)
 			get_node("../World").add_child(proj)
 			get_node("../World").add_child(part)
-			get_parent().send_tracer(part.direction, 1000.0, part.homing)
+			get_parent().send_tracer(part.direction, 1000.0, part.homing, part.grenade)
 
 func reload():
 	if tte <= current_weapon.reload_start+current_weapon.reload_time: return
@@ -287,6 +310,20 @@ func _physics_process(delta):
 
 
 # SIGNALS 
+
+
+
+@warning_ignore("unused_parameter")
+func _grenade_hit(pos: Vector3, normal: Vector3, vel: Vector3, target: Node):
+	var opos = get_node("../Opponent").global_position
+	var dist = (opos-pos)
+	var sdist = 6.0
+	if dist.length() < sdist:
+		get_parent().hit_opponent(dist.normalized()*((sdist-dist.length())/sdist),current_weapon)
+		$Camera3D/HUD/CenterContainer/Sprite2D.position = get_viewport().size/2
+		$Camera3D/HUD/CenterContainer/Sprite2D.visible = true
+		$Camera3D/HUD/CenterContainer/Sprite2D.rotation = randi_range(0,90)
+		$Camera3D/HUD/CenterContainer/Sprite2D/Timer.start()
 
 func _powerup_timeout(type: int):
 	match current_powerup:

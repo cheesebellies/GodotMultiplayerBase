@@ -172,7 +172,8 @@ func spawn_client_tracer(packet: PackedByteArray):
 	var direction = data[0]
 	var speed = data[1]
 	var homing = data[2]
-	client.spawn_tracer(direction,speed,homing)
+	var grenade = data[3]
+	client.spawn_tracer(direction,speed,homing,grenade)
 
 
 
@@ -225,9 +226,9 @@ func pack_positional(node: Node3D) -> PackedByteArray:
 	packet.encode_float(37,rot.z)
 	return packet
 
-func pack_tracer(direction: Vector3, speed: float, homing: bool) -> PackedByteArray:
+func pack_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool) -> PackedByteArray:
 	var packet = PackedByteArray()
-	packet.resize(23)
+	packet.resize(24)
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
 	packet.encode_u8(1,EVENT_TYPE_TRACER)
 	packet.encode_float(2,direction.x)
@@ -235,18 +236,21 @@ func pack_tracer(direction: Vector3, speed: float, homing: bool) -> PackedByteAr
 	packet.encode_float(10,direction.z)
 	packet.encode_double(14,speed)
 	packet.encode_u8(22,0 if homing else 1)
+	packet.encode_u8(23,0 if grenade else 1)
 	return packet
 
 func unpack_tracer(packet: PackedByteArray) -> Array:
 	var direction: Vector3 = Vector3(0,0,0)
 	var speed: float = 0.0
 	var homing: bool = false
+	var grenade: bool = false
 	direction.x = packet.decode_float(2)
 	direction.y = packet.decode_float(6)
 	direction.z = packet.decode_float(10)
 	speed = packet.decode_double(14)
 	homing = packet.decode_u8(22) == 0
-	return [direction,speed,homing]
+	grenade = packet.decode_u8(23) == 0
+	return [direction,speed,homing,grenade]
 
 
 
@@ -257,8 +261,8 @@ func unpack_tracer(packet: PackedByteArray) -> Array:
 func echo_tracer(packet: PackedByteArray, id: int):
 	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,2)
 
-func send_tracer(direction: Vector3, speed: float, homing: bool):
-	var packet = pack_tracer(direction,speed,homing)
+func send_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool):
+	var packet = pack_tracer(direction,speed,homing,grenade)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,2)
 
 func force_spawn_pickup(pid: int, type: int, variation: int, location: int):

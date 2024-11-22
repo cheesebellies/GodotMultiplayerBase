@@ -100,8 +100,8 @@ func reset_pickups():
 
 
 
-func send_tracer(direction: Vector3, speed: float, homing: bool):
-	server.send_tracer(direction,speed,homing)
+func send_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool):
+	server.send_tracer(direction,speed,homing,grenade)
 
 func force_spawn_pickup(pid: int, type: int, variation: int, location: int):
 	spawn_pickup(pid,type,variation,location)
@@ -144,9 +144,11 @@ func remove_pickup(pid: int):
 
 
 
-func spawn_tracer(direction: Vector3, speed: float, homing: bool):
+func spawn_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool):
 	var proj = preproj.instantiate()
+	proj.target = player
 	proj.homing = homing
+	proj.grenade = grenade
 	proj.position = opponent.get_node("Camera3D/Gun/Node3D").global_position
 	proj.speed = speed
 	proj.direction = direction
