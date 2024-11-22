@@ -1,0 +1,74 @@
+[gd_scene load_steps=8 format=3 uid="uid://wc2pjs4piswn"]
+
+[ext_resource type="Script" path="res://Tools/MapMakerHelper.gd" id="1_urgrg"]
+[ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="2_n8wdf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_47cji"]
+albedo_texture = ExtResource("2_n8wdf")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_offset = Vector3(0, -0.5, 0)
+uv1_triplanar = true
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ympdg"]
+rayleigh_coefficient = 1.5
+rayleigh_color = Color(0.102, 0.2763, 0.6, 1)
+mie_eccentricity = 0.99
+mie_color = Color(0.81, 0.6156, 0.6156, 1)
+turbidity = 5.0
+ground_color = Color(0.396078, 0.690196, 0.839216, 1)
+energy_multiplier = 10.0
+
+[sub_resource type="Sky" id="Sky_cnphj"]
+sky_material = SubResource("PhysicalSkyMaterial_ympdg")
+
+[sub_resource type="Environment" id="Environment_dryue"]
+background_mode = 2
+background_energy_multiplier = 0.5
+sky = SubResource("Sky_cnphj")
+fog_mode = 1
+fog_density = 1.0
+volumetric_fog_density = 0.2578
+volumetric_fog_albedo = Color(0.135012, 0.135012, 0.135012, 1)
+volumetric_fog_emission = Color(0.133333, 0.133333, 0.537255, 1)
+volumetric_fog_emission_energy = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_povjn"]
+albedo_texture = ExtResource("2_n8wdf")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_offset = Vector3(0, -0.5, 0)
+uv1_triplanar = true
+
+[node name="Test1" type="Node3D"]
+script = ExtResource("1_urgrg")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+use_collision = true
+size = Vector3(184, 2, 43)
+material = SubResource("StandardMaterial3D_47cji")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.940389, 0.282882, 0.188802, -1.77636e-15, -0.555135, 0.83176, 0.340101, -0.782178, -0.522043, 0, 39.0068, 0)
+shadow_enabled = true
+directional_shadow_blend_splits = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dryue")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.5, 0)
+use_collision = true
+size = Vector3(20, 2, 12)
+material = SubResource("StandardMaterial3D_povjn")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -5)
+use_collision = true
+size = Vector3(20, 6, 2)
+material = SubResource("StandardMaterial3D_povjn")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 5)
+use_collision = true
+size = Vector3(20, 6, 2)
+material = SubResource("StandardMaterial3D_povjn")

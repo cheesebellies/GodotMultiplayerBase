@@ -16,7 +16,9 @@ radius = 3.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hq45l"]
 albedo_texture = ExtResource("1_hvwqw")
-uv1_scale = Vector3(25, -25, 25)
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_offset = Vector3(0, -0.25, 0)
+uv1_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jehcg"]
 albedo_texture = ExtResource("1_hvwqw")
