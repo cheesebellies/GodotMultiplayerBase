@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://wc2pjs4piswn"]
+[gd_scene load_steps=7 format=3 uid="uid://wc2pjs4piswn"]
 
 [ext_resource type="Script" path="res://Tools/MapMakerHelper.gd" id="1_urgrg"]
 [ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="2_n8wdf"]
@@ -32,12 +32,6 @@ volumetric_fog_albedo = Color(0.135012, 0.135012, 0.135012, 1)
 volumetric_fog_emission = Color(0.133333, 0.133333, 0.537255, 1)
 volumetric_fog_emission_energy = 0.0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_povjn"]
-albedo_texture = ExtResource("2_n8wdf")
-uv1_scale = Vector3(0.5, 0.5, 0.5)
-uv1_offset = Vector3(0, -0.5, 0)
-uv1_triplanar = true
-
 [node name="Test1" type="Node3D"]
 script = ExtResource("1_urgrg")
 
@@ -55,20 +49,4 @@ directional_shadow_blend_splits = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_dryue")
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.5, 0)
-use_collision = true
-size = Vector3(20, 2, 12)
-material = SubResource("StandardMaterial3D_povjn")
-
-[node name="CSGBox3D3" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -5)
-use_collision = true
-size = Vector3(20, 6, 2)
-material = SubResource("StandardMaterial3D_povjn")
-
-[node name="CSGBox3D4" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 5)
-use_collision = true
-size = Vector3(20, 6, 2)
-material = SubResource("StandardMaterial3D_povjn")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
