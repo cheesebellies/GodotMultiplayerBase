@@ -264,7 +264,18 @@ func _physics_process(delta):
 		if just_hit && is_on_floor():
 			just_hit = false
 		if !is_on_floor():
-			velocity += direction * 0.55
+			if just_hit:
+				var nvel = velocity
+				nvel.x += direction.x * 1.5 * (2/0.8)
+				nvel.z += direction.z * 1.5 * (2/0.8)
+				var vxylen = Vector3(velocity.x,0,velocity.y)
+				if vxylen.length() > SPEED:
+					var nxylen = Vector3(nvel.x,0,nvel.y)
+					if (vxylen.length() + nxylen.length()) < vxylen.length():
+						velocity = nvel
+				else:
+					velocity = nvel
+			velocity += direction * 0.45
 			# Air damping
 			velocity.x *= 0.995
 			velocity.z *= 0.995
