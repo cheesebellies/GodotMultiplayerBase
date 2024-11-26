@@ -243,6 +243,7 @@ func _ready() -> void:
 	else:
 		$Showgun.visible = false
 	$Camera3D/Gun/ReloadTimer.connect("timeout",_reload_complete)
+	current_weapon = weapons[randi_range(0,5)]
 
 func _input(event):
 	if !is_auth: return
@@ -263,16 +264,7 @@ func _physics_process(delta):
 		if just_hit && is_on_floor():
 			just_hit = false
 		if !is_on_floor():
-			if just_hit:
-				# In the air, just hit. Move at 35% speed so long as it slows you down
-				var nvel = velocity + direction * 0.35
-				var nxyvel = Vector3(velocity.x,0.0,velocity.z)
-				if nxyvel.length() > SPEED:
-					if nvel.length() < velocity.length():
-						velocity = nvel
-			else:
-				# In the air, not just hit. Move at 55% speed
-				velocity += direction * 0.55
+			velocity += direction * 0.55
 			# Air damping
 			velocity.x *= 0.995
 			velocity.z *= 0.995

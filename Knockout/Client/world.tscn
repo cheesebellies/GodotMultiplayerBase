@@ -219,6 +219,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 1.5, 0)
 [node name="Node3D4" type="Node3D" parent="PickupSpawns"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39, 1.5, 39)
 
+[node name="Node3D6" type="Node3D" parent="PickupSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39, 1.5, -21)
+
+[node name="Node3D5" type="Node3D" parent="PickupSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.5, 39)
+
 [node name="Node3D2" type="Node3D" parent="PickupSpawns"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 9.5, 19)
 

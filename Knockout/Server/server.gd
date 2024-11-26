@@ -156,7 +156,7 @@ func spawn_pickup():
 		var has_pup = []
 		for i in game_state_exclusives["pickups"][GSEkey].values(): if i["available"]: has_pup.append(i["location"])
 		if has_pup.size() >= PICKUP_LOCATIONS: continue
-		var locations = [0,1,2,3]
+		var locations = [0,1,2,3,4,5]
 		for i in has_pup: locations.erase(i)
 		var loc_choice = locations.pick_random()
 		var type = randi_range(0,1)
