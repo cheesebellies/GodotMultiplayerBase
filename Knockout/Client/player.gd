@@ -104,8 +104,8 @@ var weapons: Dictionary = {
 	POWERUP_SAVIOR: false		# Passive (activates on death) that teleports the player back to spawn, saving them, at a cost of +200% knockback
 }
 
-var current_weapon: Weapon = weapons[WEAPON_LAUNCHER]
-var current_powerup = POWERUP_HOMING
+var current_weapon: Weapon = weapons[WEAPON_REVOLVER]
+var current_powerup = null
 var fire_rate_mod: float = 1.0
 var has_homing: bool = false
 
