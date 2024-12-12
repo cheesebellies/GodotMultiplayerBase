@@ -12,9 +12,8 @@ const preproj = preload("res://Client/projectile.tscn")
 #****************************************************
 #						To-do:
 #
-#3	- Add a slight aim assist option
-#6	- Implement powerup selection
-#
+# Cleanup deprecated code
+# Let's go gambling!
 #
 #
 #****************************************************
