@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://wc2pjs4piswn"]
 
-[ext_resource type="Script" path="res://Tools/MapMakerHelper.gd" id="1_urgrg"]
+[ext_resource type="Script" path="res://Old/MapMakerHelper.gd" id="1_urgrg"]
 [ext_resource type="Texture2D" uid="uid://jy73cuoc752m" path="res://Assets/PrototypeTextures/prototype_512x512_white.png" id="2_n8wdf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_47cji"]

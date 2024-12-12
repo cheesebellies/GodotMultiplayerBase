@@ -12,7 +12,7 @@ const preproj = preload("res://Client/projectile.tscn")
 #****************************************************
 #						To-do:
 #
-# Cleanup deprecated code
+# Cleanup deprecated code (specifically, server.gd, client.gd, player.gd, and all mentions of pickups.) Make sure to save all the code in res://Old/
 # Let's go gambling!
 #
 #

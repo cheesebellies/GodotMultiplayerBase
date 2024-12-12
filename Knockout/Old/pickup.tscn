@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dcejnb2q23ht7"]
 
-[ext_resource type="Script" path="res://Client/pickup.gd" id="1_6i74e"]
+[ext_resource type="Script" path="res://Old/pickup.gd" id="1_6i74e"]
 [ext_resource type="ArrayMesh" uid="uid://s6dah1trujjb" path="res://Assets/gun_new.obj" id="2_q0yr8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4icwp"]
