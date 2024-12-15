@@ -6,7 +6,7 @@ extends Node
 
 
 
-const PICKUP_LOCATIONS: int = 4
+#
 
 
 
@@ -15,7 +15,7 @@ const PICKUP_LOCATIONS: int = 4
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_PICKUP, EVENT_TYPE_PICKUP_RESET, EVENT_TYPE_PICKUP_SPAWN, EVENT_TYPE_TRACER}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_TRACER}
 enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
@@ -39,8 +39,7 @@ var client: Node = null
 var pairings: Dictionary = {}
 var game_ids: Dictionary = {}
 var enet_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
-var game_state_exclusives: Dictionary = {"pickups": {}}
-var pid_counter: int = 0
+var game_state: Dictionary = {}
 
 
 
@@ -111,7 +110,7 @@ func make_pairings():
 		fl[pl[i+1]] = pl[i]
 		game_ids[pl[i]] = i
 		game_ids[pl[i+1]] = i
-		game_state_exclusives["pickups"][i] = {0:{"location": 2, "available": true}}
+		game_state[i] = {'cards' = []}
 	pairings = fl
 
 func update_position(packet: PackedByteArray):
@@ -138,34 +137,6 @@ func handle_player_disconnect():
 func handle_player_death(wol: int):
 	client.reset_world()
 	debuge("Match won" if wol == EVENT_INFO_MATCH_WON else "Match lost")
-
-func evaluate_pickup(id: int, packet: PackedByteArray):
-	var pid = packet.decode_u16(2)
-	if game_state_exclusives["pickups"][game_ids[id]][pid]["available"]:
-		game_state_exclusives["pickups"][game_ids[id]][pid]["available"] = false
-		echo_pickup_picked_up(id,pid)
-
-func confirm_pickup(is_player: bool, pid: int):
-	client.confirm_pickup_picked_up(is_player, pid)
-
-func reset_pickups_server(id: int):
-	game_state_exclusives["pickups"][game_ids[id]] = {0: {"location": 2, "available": true}}
-
-func spawn_pickup():
-	for GSEkey in game_state_exclusives["pickups"].keys():
-		var has_pup = []
-		for i in game_state_exclusives["pickups"][GSEkey].values(): if i["available"]: has_pup.append(i["location"])
-		if has_pup.size() >= PICKUP_LOCATIONS: continue
-		var locations = [0,1,2,3,4,5]
-		for i in has_pup: locations.erase(i)
-		var loc_choice = locations.pick_random()
-		var type = randi_range(0,1)
-		var variation = randi_range(1,5) if type == 0 else randi_range(0,7)
-		game_state_exclusives["pickups"][GSEkey][pid_counter] = {"location": loc_choice, "available": true}
-		force_spawn_pickup(pid_counter,type,variation,loc_choice)
-
-func client_force_spawn_pickup(pid: int, type: int, variation: int, location: int):
-	client.force_spawn_pickup(pid,type,variation,location)
 
 func spawn_client_tracer(packet: PackedByteArray):
 	var data = unpack_tracer(packet)
@@ -265,44 +236,6 @@ func send_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool):
 	var packet = pack_tracer(direction,speed,homing,grenade)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,2)
 
-func force_spawn_pickup(pid: int, type: int, variation: int, location: int):
-	debugs("Force spawning pickup")
-	var packet = PackedByteArray()
-	packet.resize(7)
-	packet.encode_u8(0,PACKET_TYPE_EVENT)
-	packet.encode_u8(1,EVENT_TYPE_PICKUP_SPAWN)
-	packet.encode_u16(2,pid)
-	packet.encode_u8(4,type)
-	packet.encode_u8(5,variation)
-	packet.encode_u8(6,location)
-	multiplayer.send_bytes(packet,0,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
-
-func reset_pickups():
-	var packet = PackedByteArray()
-	packet.resize(2)
-	packet.encode_u8(0,PACKET_TYPE_EVENT)
-	packet.encode_u8(1,EVENT_TYPE_PICKUP_RESET)
-	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
-
-func echo_pickup_picked_up(id: int, pid: int):
-	var packet = PackedByteArray()
-	packet.resize(5)
-	packet.encode_u8(0,PACKET_TYPE_EVENT)
-	packet.encode_u8(1,EVENT_TYPE_PICKUP)
-	packet.encode_u8(2,0)
-	packet.encode_u16(3,pid)
-	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
-	packet.encode_u8(2,1)
-	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
-
-func pickup_picked_up(pid: int):
-	var packet = PackedByteArray()
-	packet.resize(4)
-	packet.encode_u8(0,PACKET_TYPE_EVENT)
-	packet.encode_u8(1,EVENT_TYPE_PICKUP)
-	packet.encode_u16(2,pid)
-	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
-
 func player_death():
 	var packet = PackedByteArray()
 	packet.resize(3)
@@ -380,10 +313,6 @@ func ping_server():
 
 
 
-func _pickup_spawn_timer_timeout():
-	pid_counter += 1
-	spawn_pickup()
-
 func _endpoint_server_disconnect():
 	return_to_menu(1)
 
@@ -411,10 +340,6 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 				handle_player_disconnect()
 			elif type == EVENT_TYPE_PLAYER_DEATH:
 				handle_player_death(packet.decode_u8(2))
-			elif type == EVENT_TYPE_PICKUP:
-				confirm_pickup(packet.decode_u8(2) == 0,packet.decode_u16(3))
-			elif type == EVENT_TYPE_PICKUP_SPAWN:
-				client_force_spawn_pickup(packet.decode_u16(2),packet.decode_u8(4),packet.decode_u8(5),packet.decode_u8(6))
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 
@@ -437,9 +362,5 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 				multiplayer.multiplayer_peer.refuse_new_connections = true
 				make_pairings()
 				event_start_echo()
-			elif type == EVENT_TYPE_PICKUP:
-				evaluate_pickup(id,packet)
-			elif type == EVENT_TYPE_PICKUP_RESET:
-				reset_pickups_server(id)
 		PACKET_TYPE_IMPULSE:
 			echo_hit(id,packet)
