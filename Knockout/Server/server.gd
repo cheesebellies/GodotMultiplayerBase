@@ -15,7 +15,7 @@ extends Node
 
 
 enum {PACKET_TYPE_PING, PACKET_TYPE_POSITIONAL, PACKET_TYPE_EVENT, PACKET_TYPE_IMPULSE, PACKET_TYPE_STATE, PACKET_TYPE_OTHER}
-enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_TRACER}
+enum {EVENT_TYPE_GAME_START, EVENT_TYPE_PLAYER_LEAVE, EVENT_TYPE_GAME_END, EVENT_TYPE_PLAYER_DEATH, EVENT_TYPE_TRACER, EVENT_TYPE_HAND_CARDS_UPDATE}
 enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 
 
@@ -102,6 +102,10 @@ func return_to_menu(code: int):
 func make_pairings():
 	var pl = multiplayer.get_peers()
 	var fl = {}
+	var default_cards = []
+	for s in range(4):
+		for n in range(13):
+			default_cards.append(Card.new(n,s))
 	for i in range(0,len(pl),2):
 		if (len(pl) - i) < 2:
 			fl[pl[i]] = -1
@@ -110,7 +114,7 @@ func make_pairings():
 		fl[pl[i+1]] = pl[i]
 		game_ids[pl[i]] = i
 		game_ids[pl[i+1]] = i
-		game_state[i] = {'cards' = []}
+		game_state[i] = {'deck' = default_cards.duplicate()}
 	pairings = fl
 
 func update_position(packet: PackedByteArray):
@@ -145,6 +149,15 @@ func spawn_client_tracer(packet: PackedByteArray):
 	var homing = data[2]
 	var grenade = data[3]
 	client.spawn_tracer(direction,speed,homing,grenade)
+
+func set_game_hands_random(game_id: int):
+	var card_options: Array = game_state[game_id]["deck"]
+	var choices = []
+	for i in range(4):
+		var c = card_options.pick_random()
+		choices.append(c)
+		card_options.erase(c)
+	game_ids[game_state]
 
 
 
@@ -228,6 +241,17 @@ func unpack_tracer(packet: PackedByteArray) -> Array:
 #Packet functions
 
 
+
+func update_client_cards(id: int, card_one: Card, card_two: Card):
+	var packet = PackedByteArray()
+	packet.resize(6)
+	packet.encode_u8(0,PACKET_TYPE_EVENT)
+	packet.encode_u8(1,EVENT_TYPE_HAND_CARDS_UPDATE)
+	packet.encode_u8(2,card_one.suit)
+	packet.encode_u8(3,card_one.number)
+	packet.encode_u8(4,card_two.suit)
+	packet.encode_u8(5,card_two.number)
+	multiplayer.send_bytes(packet,id,MultiplayerPeer.TRANSFER_MODE_RELIABLE,2)
 
 func echo_tracer(packet: PackedByteArray, id: int):
 	multiplayer.send_bytes(packet,pairings[id],MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,2)
