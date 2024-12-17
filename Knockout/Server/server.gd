@@ -38,6 +38,7 @@ enum {EVENT_INFO_MATCH_WON, EVENT_INFO_MATCH_LOST}
 var client: Node = null
 var pairings: Dictionary = {}
 var game_ids: Dictionary = {}
+var player_ids: Dictionary = {}
 var enet_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 var game_state: Dictionary = {}
 
@@ -74,6 +75,7 @@ func init():
 		multiplayer.peer_packet.connect(_endpoint_packet_received)
 		multiplayer.server_disconnected.connect(_endpoint_server_disconnect)
 		debuge("Connected")
+		
 
 
 func _ready():
@@ -114,6 +116,7 @@ func make_pairings():
 		fl[pl[i+1]] = pl[i]
 		game_ids[pl[i]] = i
 		game_ids[pl[i+1]] = i
+		player_ids[i] = [pl[i],pl[i+1]]
 		game_state[i] = {'deck' = default_cards.duplicate()}
 	pairings = fl
 
@@ -157,7 +160,12 @@ func set_game_hands_random(game_id: int):
 		var c = card_options.pick_random()
 		choices.append(c)
 		card_options.erase(c)
-	game_ids[game_state]
+	game_state[game_id]["deck"] = card_options
+	var c = 0
+	for player_id in player_ids[game_id]:
+		update_client_cards(player_id, choices[c], choices[c+1])
+		c += 2
+
 
 
 
@@ -318,6 +326,7 @@ func event_start():
 	packet.encode_u8(0,PACKET_TYPE_EVENT)
 	packet.encode_u8(1,EVENT_TYPE_GAME_START)
 	multiplayer.send_bytes(packet,1,MultiplayerPeer.TRANSFER_MODE_RELIABLE,0)
+	
 
 func ping_response(id):
 	var packet = PackedByteArray()
