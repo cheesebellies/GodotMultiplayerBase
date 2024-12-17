@@ -15,6 +15,7 @@ var ticks: int = 0
 var tte: float = 0.0
 var resetting: bool = false
 const preproj = preload("res://Client/projectile.tscn")
+var hand: Array = []
 
 #Multiplayer
 var server: Node
@@ -104,6 +105,9 @@ func start_game(opponent_id: int):
 #MULTIPLAYER
 
 
+
+func update_hand(card_one: Card, card_two: Card):
+	hand = [card_one,card_two]
 
 func spawn_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool):
 	var proj = preproj.instantiate()

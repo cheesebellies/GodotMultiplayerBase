@@ -161,10 +161,15 @@ func set_game_hands_random(game_id: int):
 		choices.append(c)
 		card_options.erase(c)
 	game_state[game_id]["deck"] = card_options
-	var c = 0
+	var ctr = 0
 	for player_id in player_ids[game_id]:
-		update_client_cards(player_id, choices[c], choices[c+1])
-		c += 2
+		update_client_cards(player_id, choices[ctr], choices[ctr+1])
+		ctr += 2
+
+func update_client_hand(packet: PackedByteArray):
+	var card_one = Card.new(packet.decode_u8(3),packet.decode_u8(2))
+	var card_two = Card.new(packet.decode_u8(5),packet.decode_u8(3))
+	client.update_hand(card_one,card_two)
 
 
 
@@ -373,6 +378,8 @@ func _endpoint_packet_received(_id: int, packet: PackedByteArray):
 				handle_player_disconnect()
 			elif type == EVENT_TYPE_PLAYER_DEATH:
 				handle_player_death(packet.decode_u8(2))
+			elif type == EVENT_TYPE_HAND_CARDS_UPDATE:
+				update_client_hand(packet)
 		PACKET_TYPE_IMPULSE:
 			apply_impulse(packet)
 
@@ -395,5 +402,7 @@ func _server_packet_received(id: int, packet: PackedByteArray):
 				multiplayer.multiplayer_peer.refuse_new_connections = true
 				make_pairings()
 				event_start_echo()
+				for game_id in player_ids.keys():
+					set_game_hands_random(game_id)
 		PACKET_TYPE_IMPULSE:
 			echo_hit(id,packet)
