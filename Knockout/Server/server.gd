@@ -101,13 +101,17 @@ func return_to_menu(code: int):
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	self.queue_free()
 
+func get_fresh_deck():
+	var dc = []
+	for s in range(4):
+		for n in range(13):
+			dc.append(Card.new(n,s))
+	return dc
+
 func make_pairings():
 	var pl = multiplayer.get_peers()
 	var fl = {}
-	var default_cards = []
-	for s in range(4):
-		for n in range(13):
-			default_cards.append(Card.new(n,s))
+	var default_cards = get_fresh_deck()
 	for i in range(0,len(pl),2):
 		if (len(pl) - i) < 2:
 			fl[pl[i]] = -1
@@ -168,7 +172,7 @@ func set_game_hands_random(game_id: int):
 
 func update_client_hand(packet: PackedByteArray):
 	var card_one = Card.new(packet.decode_u8(3),packet.decode_u8(2))
-	var card_two = Card.new(packet.decode_u8(5),packet.decode_u8(3))
+	var card_two = Card.new(packet.decode_u8(5),packet.decode_u8(4))
 	client.update_hand(card_one,card_two)
 
 

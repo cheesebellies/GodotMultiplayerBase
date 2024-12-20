@@ -108,6 +108,8 @@ func start_game(opponent_id: int):
 
 func update_hand(card_one: Card, card_two: Card):
 	hand = [card_one,card_two]
+	player.get_node("HandContainer/Hand/Card1").card = card_one
+	player.get_node("HandContainer/Hand/Card2").card = card_two
 
 func spawn_tracer(direction: Vector3, speed: float, homing: bool, grenade: bool):
 	var proj = preproj.instantiate()

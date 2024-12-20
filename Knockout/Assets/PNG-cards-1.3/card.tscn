@@ -1,20 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bu85tv4thja6j"]
+[gd_scene load_steps=3 format=3 uid="uid://bu85tv4thja6j"]
 
 [ext_resource type="Script" path="res://Assets/PNG-cards-1.3/card.gd" id="1_maom7"]
 [ext_resource type="ArrayMesh" uid="uid://b4vslbkk2dj14" path="res://Assets/PNG-cards-1.3/card.obj" id="1_rhwip"]
-[ext_resource type="Texture2D" uid="uid://doluiut14kcol" path="res://Assets/PNG-cards-1.3/ace_of_spades.png" id="2_xbl3s"]
-[ext_resource type="Texture2D" uid="uid://diuyrmnma3d63" path="res://Assets/PNG-cards-1.3/back.png" id="3_erq3t"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yx7da"]
-albedo_texture = ExtResource("2_xbl3s")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pyul7"]
-albedo_texture = ExtResource("3_erq3t")
 
 [node name="Card" type="Node3D"]
 script = ExtResource("1_maom7")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = ExtResource("1_rhwip")
-surface_material_override/0 = SubResource("StandardMaterial3D_yx7da")
-surface_material_override/1 = SubResource("StandardMaterial3D_pyul7")
